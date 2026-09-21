@@ -1,5 +1,15 @@
 package com.example.megax3player.ui
 
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.ui.draw.alpha
+import android.content.res.Configuration
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.megax3player.model.Track
+import com.example.megax3player.ui.theme.MegaX3PlayerTheme
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -850,6 +860,40 @@ private fun SmallControl(
 
 @Composable
 private fun PlayerLoading() {
+    val transition = rememberInfiniteTransition(
+        label = "loadingPulse"
+    )
+
+    val pulse by transition.animateFloat(
+        initialValue = 0.45f,
+        targetValue = 0.9f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(900),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "loadingAlpha"
+    )
+
+    BoxWithConstraints(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        if (maxWidth < 600.dp) {
+            CompactLoadingPlayer(
+                pulse = pulse
+            )
+        } else {
+            WideLoadingPlayer(
+                pulse = pulse
+            )
+        }
+    }
+}
+
+@Composable
+private fun CompactLoadingPlayer(
+    pulse: Float
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -865,28 +909,322 @@ private fun PlayerLoading() {
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(
+        LoadingDisplay(
+            pulse = pulse,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(
+            modifier = Modifier.weight(1f)
+        )
+
+        LoadingWheel(
+            pulse = pulse
+        )
+
+        Spacer(
+            modifier = Modifier.height(14.dp)
+        )
+
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            SkeletonBlock(
+                modifier = Modifier
+                    .width(76.dp)
+                    .height(25.dp),
+                pulse = pulse
+            )
+
+            SkeletonBlock(
+                modifier = Modifier
+                    .width(76.dp)
+                    .height(25.dp),
+                pulse = pulse
+            )
+        }
+
+        Spacer(
+            modifier = Modifier.height(12.dp)
+        )
+
+        SkeletonBlock(
+            modifier = Modifier
+                .width(110.dp)
+                .height(8.dp),
+            pulse = pulse
+        )
+    }
+}
+
+@Composable
+private fun WideLoadingPlayer(
+    pulse: Float
+) {
+    Row(
+        modifier = Modifier
+            .widthIn(max = 850.dp)
+            .fillMaxHeight(0.86f)
+            .clip(RoundedCornerShape(30.dp))
+            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .border(
+                width = 2.dp,
+                color = MaterialTheme.colorScheme.outline,
+                shape = RoundedCornerShape(30.dp)
+            )
+            .padding(24.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(36.dp)
+    ) {
+        LoadingDisplay(
+            pulse = pulse,
+            modifier = Modifier.weight(1.1f)
+        )
+
+        Column(
+            modifier = Modifier.weight(0.9f),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            LoadingWheel(
+                pulse = pulse
+            )
+
+            Spacer(
+                modifier = Modifier.height(18.dp)
+            )
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                SkeletonBlock(
+                    modifier = Modifier
+                        .width(76.dp)
+                        .height(25.dp),
+                    pulse = pulse
+                )
+
+                SkeletonBlock(
+                    modifier = Modifier
+                        .width(76.dp)
+                        .height(25.dp),
+                    pulse = pulse
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun LoadingDisplay(
+    pulse: Float,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .clip(RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surface)
+            .border(
+                width = 3.dp,
+                color = MaterialTheme.colorScheme.outline,
+                shape = RoundedCornerShape(16.dp)
+            )
+            .padding(14.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            SkeletonBlock(
+                modifier = Modifier
+                    .width(42.dp)
+                    .height(8.dp),
+                pulse = pulse
+            )
+
+            Spacer(
+                modifier = Modifier.weight(1f)
+            )
+
+            SkeletonBlock(
+                modifier = Modifier
+                    .width(38.dp)
+                    .height(8.dp),
+                pulse = pulse
+            )
+
+            Spacer(
+                modifier = Modifier.width(8.dp)
+            )
+
+            SkeletonBlock(
+                modifier = Modifier
+                    .width(24.dp)
+                    .height(10.dp),
+                pulse = pulse
+            )
+        }
+
+        Spacer(
+            modifier = Modifier.height(14.dp)
+        )
+
+        SkeletonBlock(
+            modifier = Modifier
+                .size(145.dp),
+            pulse = pulse,
+            cornerRadius = 12
+        )
+
+        Spacer(
+            modifier = Modifier.height(14.dp)
+        )
+
+        SkeletonBlock(
+            modifier = Modifier
+                .width(170.dp)
+                .height(17.dp),
+            pulse = pulse
+        )
+
+        Spacer(
+            modifier = Modifier.height(7.dp)
+        )
+
+        SkeletonBlock(
+            modifier = Modifier
+                .width(90.dp)
+                .height(10.dp),
+            pulse = pulse
+        )
+
+        Spacer(
+            modifier = Modifier.height(15.dp)
+        )
+
+        SkeletonBlock(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(300.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .background(MaterialTheme.colorScheme.surface)
-                .border(
-                    width = 3.dp,
-                    color = MaterialTheme.colorScheme.outline,
-                    shape = RoundedCornerShape(16.dp)
-                ),
-            contentAlignment = Alignment.Center
+                .height(6.dp),
+            pulse = pulse
+        )
+
+        Spacer(
+            modifier = Modifier.height(7.dp)
+        )
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(
-                text = "LOADING",
-                fontSize = 13.sp,
-                fontFamily = FontFamily.Monospace,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
+            SkeletonBlock(
+                modifier = Modifier
+                    .width(32.dp)
+                    .height(7.dp),
+                pulse = pulse
+            )
+
+            SkeletonBlock(
+                modifier = Modifier
+                    .width(32.dp)
+                    .height(7.dp),
+                pulse = pulse
             )
         }
     }
+}
+
+@Composable
+private fun LoadingWheel(
+    pulse: Float
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth(0.76f)
+            .widthIn(max = 250.dp)
+            .aspectRatio(1f)
+            .clip(CircleShape)
+            .background(MaterialTheme.colorScheme.surface)
+            .border(
+                width = 2.dp,
+                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+                shape = CircleShape
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        SkeletonBlock(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(top = 24.dp)
+                .width(44.dp)
+                .height(8.dp),
+            pulse = pulse
+        )
+
+        SkeletonBlock(
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .padding(start = 20.dp)
+                .width(34.dp)
+                .height(8.dp),
+            pulse = pulse
+        )
+
+        SkeletonBlock(
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .padding(end = 20.dp)
+                .width(34.dp)
+                .height(8.dp),
+            pulse = pulse
+        )
+
+        SkeletonBlock(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 24.dp)
+                .width(42.dp)
+                .height(8.dp),
+            pulse = pulse
+        )
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize(0.38f)
+                .clip(CircleShape)
+                .background(
+                    MaterialTheme.colorScheme.surfaceVariant
+                )
+                .border(
+                    width = 2.dp,
+                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.35f),
+                    shape = CircleShape
+                )
+                .alpha(pulse)
+        )
+    }
+}
+
+@Composable
+private fun SkeletonBlock(
+    modifier: Modifier,
+    pulse: Float,
+    cornerRadius: Int = 5
+) {
+    Box(
+        modifier = modifier
+            .alpha(pulse)
+            .clip(
+                RoundedCornerShape(
+                    cornerRadius.dp
+                )
+            )
+            .background(
+                MaterialTheme.colorScheme.onSurface.copy(
+                    alpha = 0.16f
+                )
+            )
+    )
 }
 
 @Composable
@@ -985,4 +1323,154 @@ private fun formatTime(
         minutes,
         seconds
     )
+}
+
+private val previewTrack = Track(
+    id = 1,
+    title = "Other People",
+    artist = "LP",
+    duration = "03:48",
+    audioResId = 0,
+    coverResId = 0
+)
+
+@Preview(
+    name = "Player Light",
+    showBackground = true,
+    widthDp = 390,
+    heightDp = 800
+)
+@Composable
+private fun PlayerLightPreview() {
+    MegaX3PlayerTheme(darkTheme = false) {
+        PlayerScreen(
+            state = PlayerUiState.Content(
+                track = previewTrack,
+                isPlaying = true,
+                positionMs = 80000L,
+                durationMs = 228000L
+            ),
+            darkTheme = false,
+            windowWidthSizeClass = WindowWidthSizeClass.Compact,
+            onDarkThemeChange = {},
+            onOpenPlaylist = {},
+            onPlayPause = {},
+            onNext = {},
+            onPrevious = {},
+            onSeek = {},
+            onShuffle = {},
+            onRepeat = {}
+        )
+    }
+}
+
+@Preview(
+    name = "Player Dark",
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    widthDp = 390,
+    heightDp = 800
+)
+@Composable
+private fun PlayerDarkPreview() {
+    MegaX3PlayerTheme(darkTheme = true) {
+        PlayerScreen(
+            state = PlayerUiState.Content(
+                track = previewTrack,
+                isPlaying = false,
+                positionMs = 80000L,
+                durationMs = 228000L
+            ),
+            darkTheme = true,
+            windowWidthSizeClass = WindowWidthSizeClass.Compact,
+            onDarkThemeChange = {},
+            onOpenPlaylist = {},
+            onPlayPause = {},
+            onNext = {},
+            onPrevious = {},
+            onSeek = {},
+            onShuffle = {},
+            onRepeat = {}
+        )
+    }
+}
+
+@Preview(
+    name = "Player Loading",
+    showBackground = true,
+    widthDp = 390,
+    heightDp = 800
+)
+@Composable
+private fun PlayerLoadingPreview() {
+    MegaX3PlayerTheme(darkTheme = false) {
+        PlayerScreen(
+            state = PlayerUiState.Loading,
+            darkTheme = false,
+            windowWidthSizeClass = WindowWidthSizeClass.Compact,
+            onDarkThemeChange = {},
+            onOpenPlaylist = {},
+            onPlayPause = {},
+            onNext = {},
+            onPrevious = {},
+            onSeek = {},
+            onShuffle = {},
+            onRepeat = {}
+        )
+    }
+}
+
+@Preview(
+    name = "Player Empty",
+    showBackground = true,
+    widthDp = 390,
+    heightDp = 800
+)
+@Composable
+private fun PlayerEmptyPreview() {
+    MegaX3PlayerTheme(darkTheme = false) {
+        PlayerScreen(
+            state = PlayerUiState.Empty,
+            darkTheme = false,
+            windowWidthSizeClass = WindowWidthSizeClass.Compact,
+            onDarkThemeChange = {},
+            onOpenPlaylist = {},
+            onPlayPause = {},
+            onNext = {},
+            onPrevious = {},
+            onSeek = {},
+            onShuffle = {},
+            onRepeat = {}
+        )
+    }
+}
+
+@Preview(
+    name = "Player Tablet",
+    showBackground = true,
+    widthDp = 900,
+    heightDp = 600
+)
+@Composable
+private fun PlayerTabletPreview() {
+    MegaX3PlayerTheme(darkTheme = false) {
+        PlayerScreen(
+            state = PlayerUiState.Content(
+                track = previewTrack,
+                isPlaying = true,
+                positionMs = 80000L,
+                durationMs = 228000L
+            ),
+            darkTheme = false,
+            windowWidthSizeClass = WindowWidthSizeClass.Expanded,
+            onDarkThemeChange = {},
+            onOpenPlaylist = {},
+            onPlayPause = {},
+            onNext = {},
+            onPrevious = {},
+            onSeek = {},
+            onShuffle = {},
+            onRepeat = {}
+        )
+    }
 }
