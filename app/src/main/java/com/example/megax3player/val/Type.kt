@@ -1,4 +1,4 @@
-package com.example.megax3player.ui.theme
+package com.example.megax3player.`val`
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

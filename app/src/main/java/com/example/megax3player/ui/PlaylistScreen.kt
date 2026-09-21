@@ -29,7 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.megax3player.R
 import com.example.megax3player.model.Track
-import com.example.megax3player.ui.theme.MegaX3PlayerTheme
+import com.example.megax3player.`val`.MegaX3PlayerTheme
 
 @Composable
 fun PlaylistScreen(
@@ -43,10 +43,7 @@ fun PlaylistScreen(
     onNext: () -> Unit,
     onOpenPlayer: () -> Unit
 ) {
-    if (
-        windowHeightSizeClass ==
-        WindowHeightSizeClass.Compact
-    ) {
+    if (windowHeightSizeClass == WindowHeightSizeClass.Compact) {
         LandscapePlaylistScreen(
             tracks = tracks,
             playerState = playerState,
@@ -56,7 +53,6 @@ fun PlaylistScreen(
             onNext = onNext,
             onOpenPlayer = onOpenPlayer
         )
-
         return
     }
 
@@ -97,15 +93,13 @@ private fun CompactPlaylistScreen(
     onNext: () -> Unit,
     onOpenPlayer: () -> Unit
 ) {
-    val content =
-        playerState as? PlayerUiState.Content
+    val content = playerState as? PlayerUiState.Content
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                MaterialTheme.colorScheme.background
-            )
+            .background(MaterialTheme.colorScheme.background)
+            .windowInsetsPadding(WindowInsets.safeDrawing)
             .padding(
                 horizontal = 18.dp,
                 vertical = 14.dp
@@ -134,12 +128,9 @@ private fun CompactPlaylistScreen(
         } else {
             TrackList(
                 tracks = tracks,
-                currentTrackId =
-                    content?.track?.id,
-                onTrackClick =
-                    onTrackClick,
-                modifier =
-                    Modifier.weight(1f)
+                currentTrackId = content?.track?.id,
+                onTrackClick = onTrackClick,
+                modifier = Modifier.weight(1f)
             )
         }
 
@@ -168,18 +159,15 @@ private fun LandscapePlaylistScreen(
     onNext: () -> Unit,
     onOpenPlayer: () -> Unit
 ) {
-    val content =
-        playerState as? PlayerUiState.Content
+    val content = playerState as? PlayerUiState.Content
 
     Row(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                MaterialTheme.colorScheme.background
-            )
+            .background(MaterialTheme.colorScheme.background)
+            .windowInsetsPadding(WindowInsets.safeDrawing)
             .padding(12.dp),
-        horizontalArrangement =
-            Arrangement.spacedBy(16.dp)
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Column(
             modifier = Modifier
@@ -205,18 +193,14 @@ private fun LandscapePlaylistScreen(
 
             if (tracks.isEmpty()) {
                 EmptyPlaylist(
-                    modifier =
-                        Modifier.weight(1f)
+                    modifier = Modifier.weight(1f)
                 )
             } else {
                 TrackList(
                     tracks = tracks,
-                    currentTrackId =
-                        content?.track?.id,
-                    onTrackClick =
-                        onTrackClick,
-                    modifier =
-                        Modifier.weight(1f)
+                    currentTrackId = content?.track?.id,
+                    onTrackClick = onTrackClick,
+                    modifier = Modifier.weight(1f)
                 )
             }
         }
@@ -226,8 +210,7 @@ private fun LandscapePlaylistScreen(
                 modifier = Modifier
                     .weight(0.8f)
                     .fillMaxHeight(),
-                verticalArrangement =
-                    Arrangement.Center
+                verticalArrangement = Arrangement.Center
             ) {
                 LandscapeMiniPlayer(
                     state = content,
@@ -250,22 +233,18 @@ private fun WidePlaylistScreen(
     onNext: () -> Unit,
     onOpenPlayer: () -> Unit
 ) {
-    val content =
-        playerState as? PlayerUiState.Content
+    val content = playerState as? PlayerUiState.Content
 
     Row(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                MaterialTheme.colorScheme.background
-            )
+            .background(MaterialTheme.colorScheme.background)
+            .windowInsetsPadding(WindowInsets.safeDrawing)
             .padding(24.dp),
-        horizontalArrangement =
-            Arrangement.spacedBy(24.dp)
+        horizontalArrangement = Arrangement.spacedBy(24.dp)
     ) {
         Column(
-            modifier =
-                Modifier.weight(1.4f)
+            modifier = Modifier.weight(1.4f)
         ) {
             PlaylistHeader(
                 onBack = onBack
@@ -285,18 +264,14 @@ private fun WidePlaylistScreen(
 
             if (tracks.isEmpty()) {
                 EmptyPlaylist(
-                    modifier =
-                        Modifier.weight(1f)
+                    modifier = Modifier.weight(1f)
                 )
             } else {
                 TrackList(
                     tracks = tracks,
-                    currentTrackId =
-                        content?.track?.id,
-                    onTrackClick =
-                        onTrackClick,
-                    modifier =
-                        Modifier.weight(1f)
+                    currentTrackId = content?.track?.id,
+                    onTrackClick = onTrackClick,
+                    modifier = Modifier.weight(1f)
                 )
             }
         }
@@ -309,8 +284,7 @@ private fun WidePlaylistScreen(
                         max = 340.dp
                     )
                     .fillMaxHeight(),
-                verticalArrangement =
-                    Arrangement.Center
+                verticalArrangement = Arrangement.Center
             ) {
                 NowPlayingPanel(
                     state = content,
@@ -333,10 +307,8 @@ private fun PlaylistHeader(
         )
 
     Row(
-        modifier =
-            Modifier.fillMaxWidth(),
-        verticalAlignment =
-            Alignment.CenterVertically
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
             modifier = Modifier
@@ -346,7 +318,6 @@ private fun PlaylistHeader(
                 )
                 .semantics {
                     role = Role.Button
-
                     contentDescription =
                         backDescription
                 }
@@ -354,15 +325,13 @@ private fun PlaylistHeader(
                     role = Role.Button,
                     onClick = onBack
                 ),
-            contentAlignment =
-                Alignment.Center
+            contentAlignment = Alignment.Center
         ) {
             Text(
                 text = "<",
                 style =
                     MaterialTheme.typography.titleLarge,
-                fontWeight =
-                    FontWeight.Bold,
+                fontWeight = FontWeight.Bold,
                 color =
                     MaterialTheme.colorScheme.onBackground
             )
@@ -496,16 +465,10 @@ private fun TrackItem(
             )
             .background(
                 if (selected) {
-                    MaterialTheme
-                        .colorScheme
-                        .primary
-                        .copy(
-                            alpha = 0.12f
-                        )
+                    MaterialTheme.colorScheme.primary
+                        .copy(alpha = 0.12f)
                 } else {
-                    MaterialTheme
-                        .colorScheme
-                        .surface
+                    MaterialTheme.colorScheme.surface
                 }
             )
             .border(
@@ -517,13 +480,9 @@ private fun TrackItem(
                     },
                 color =
                     if (selected) {
-                        MaterialTheme
-                            .colorScheme
-                            .primary
+                        MaterialTheme.colorScheme.primary
                     } else {
-                        MaterialTheme
-                            .colorScheme
-                            .outline
+                        MaterialTheme.colorScheme.outline
                     },
                 shape =
                     RoundedCornerShape(8.dp)
@@ -532,10 +491,8 @@ private fun TrackItem(
                 mergeDescendants = true
             ) {
                 role = Role.Button
-
                 contentDescription =
                     trackDescription
-
                 stateDescription =
                     selectedDescription
             }
@@ -548,9 +505,8 @@ private fun TrackItem(
             Alignment.CenterVertically
     ) {
         Text(
-            text = number
-                .toString()
-                .padStart(
+            text =
+                number.toString().padStart(
                     length = 2,
                     padChar = '0'
                 ),
@@ -562,13 +518,9 @@ private fun TrackItem(
                 FontWeight.Bold,
             color =
                 if (selected) {
-                    MaterialTheme
-                        .colorScheme
-                        .primary
+                    MaterialTheme.colorScheme.primary
                 } else {
-                    MaterialTheme
-                        .colorScheme
-                        .onSurfaceVariant
+                    MaterialTheme.colorScheme.onSurfaceVariant
                 }
         )
 
@@ -579,29 +531,20 @@ private fun TrackItem(
                     RoundedCornerShape(7.dp)
                 )
                 .background(
-                    MaterialTheme
-                        .colorScheme
-                        .primary
-                        .copy(
-                            alpha = 0.12f
-                        )
+                    MaterialTheme.colorScheme.primary
+                        .copy(alpha = 0.12f)
                 ),
             contentAlignment =
                 Alignment.Center
         ) {
             Text(
-                text =
-                    number.toString(),
+                text = number.toString(),
                 style =
-                    MaterialTheme
-                        .typography
-                        .labelMedium,
+                    MaterialTheme.typography.labelMedium,
                 fontWeight =
                     FontWeight.Bold,
                 color =
-                    MaterialTheme
-                        .colorScheme
-                        .primary
+                    MaterialTheme.colorScheme.primary
             )
         }
 
@@ -610,8 +553,7 @@ private fun TrackItem(
         )
 
         Column(
-            modifier =
-                Modifier.weight(1f)
+            modifier = Modifier.weight(1f)
         ) {
             Text(
                 text = track.title,
@@ -619,9 +561,7 @@ private fun TrackItem(
                 overflow =
                     TextOverflow.Ellipsis,
                 style =
-                    MaterialTheme
-                        .typography
-                        .bodyLarge,
+                    MaterialTheme.typography.bodyLarge,
                 fontWeight =
                     if (selected) {
                         FontWeight.Bold
@@ -629,14 +569,11 @@ private fun TrackItem(
                         FontWeight.Medium
                     },
                 color =
-                    MaterialTheme
-                        .colorScheme
-                        .onSurface
+                    MaterialTheme.colorScheme.onSurface
             )
 
             Spacer(
-                modifier =
-                    Modifier.height(2.dp)
+                modifier = Modifier.height(2.dp)
             )
 
             Text(
@@ -645,49 +582,50 @@ private fun TrackItem(
                 overflow =
                     TextOverflow.Ellipsis,
                 style =
-                    MaterialTheme
-                        .typography
-                        .bodyMedium,
+                    MaterialTheme.typography.bodyMedium,
                 color =
-                    MaterialTheme
-                        .colorScheme
-                        .onSurfaceVariant
+                    MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
 
         if (selected) {
-            Text(
-                text =
-                    stringResource(
-                        R.string.playing
-                    ),
-                modifier =
-                    Modifier.padding(
-                        horizontal = 8.dp
-                    ),
-                style =
-                    MaterialTheme
-                        .typography
-                        .labelSmall,
-                fontWeight =
-                    FontWeight.Bold,
-                color =
-                    MaterialTheme
-                        .colorScheme
-                        .primary
-            )
+            Box(
+                modifier = Modifier
+                    .padding(horizontal = 6.dp)
+                    .clip(
+                        RoundedCornerShape(6.dp)
+                    )
+                    .background(
+                        MaterialTheme.colorScheme.primary
+                            .copy(alpha = 0.12f)
+                    )
+                    .padding(
+                        horizontal = 6.dp,
+                        vertical = 3.dp
+                    )
+            ) {
+                Text(
+                    text =
+                        stringResource(
+                            R.string.playing
+                        ),
+                    maxLines = 1,
+                    style =
+                        MaterialTheme.typography.labelSmall,
+                    fontWeight =
+                        FontWeight.Bold,
+                    color =
+                        MaterialTheme.colorScheme.primary
+                )
+            }
         }
 
         Text(
             text = track.duration,
             style =
-                MaterialTheme
-                    .typography
-                    .labelSmall,
+                MaterialTheme.typography.labelSmall,
             color =
-                MaterialTheme
-                    .colorScheme
-                    .onSurfaceVariant
+                MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }
@@ -726,18 +664,13 @@ private fun EmptyPlaylist(
                         R.string.empty_playlist
                     ),
                 style =
-                    MaterialTheme
-                        .typography
-                        .titleMedium,
+                    MaterialTheme.typography.titleMedium,
                 color =
-                    MaterialTheme
-                        .colorScheme
-                        .onSurface
+                    MaterialTheme.colorScheme.onSurface
             )
 
             Spacer(
-                modifier =
-                    Modifier.height(6.dp)
+                modifier = Modifier.height(6.dp)
             )
 
             Text(
@@ -746,13 +679,9 @@ private fun EmptyPlaylist(
                         R.string.empty_playlist_description
                     ),
                 style =
-                    MaterialTheme
-                        .typography
-                        .bodyMedium,
+                    MaterialTheme.typography.bodyMedium,
                 color =
-                    MaterialTheme
-                        .colorScheme
-                        .onSurfaceVariant
+                    MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }
@@ -790,7 +719,7 @@ private fun MiniPlayer(
         modifier = Modifier
             .fillMaxWidth()
             .clip(
-                RoundedCornerShape(10.dp)
+                RoundedCornerShape(12.dp)
             )
             .background(
                 MaterialTheme.colorScheme.surface
@@ -800,7 +729,7 @@ private fun MiniPlayer(
                 color =
                     MaterialTheme.colorScheme.outline,
                 shape =
-                    RoundedCornerShape(10.dp)
+                    RoundedCornerShape(12.dp)
             )
             .padding(10.dp),
         verticalAlignment =
@@ -810,15 +739,11 @@ private fun MiniPlayer(
             modifier = Modifier
                 .size(48.dp)
                 .clip(
-                    RoundedCornerShape(7.dp)
+                    RoundedCornerShape(8.dp)
                 )
                 .background(
-                    MaterialTheme
-                        .colorScheme
-                        .primary
-                        .copy(
-                            alpha = 0.12f
-                        )
+                    MaterialTheme.colorScheme.primary
+                        .copy(alpha = 0.12f)
                 ),
             contentAlignment =
                 Alignment.Center
@@ -826,15 +751,11 @@ private fun MiniPlayer(
             Text(
                 text = "MEGA",
                 style =
-                    MaterialTheme
-                        .typography
-                        .labelSmall,
+                    MaterialTheme.typography.labelSmall,
                 fontWeight =
                     FontWeight.Bold,
                 color =
-                    MaterialTheme
-                        .colorScheme
-                        .primary
+                    MaterialTheme.colorScheme.primary
             )
         }
 
@@ -853,7 +774,6 @@ private fun MiniPlayer(
                 )
                 .semantics {
                     role = Role.Button
-
                     contentDescription =
                         openPlayerDescription
                 }
@@ -870,15 +790,11 @@ private fun MiniPlayer(
                 overflow =
                     TextOverflow.Ellipsis,
                 style =
-                    MaterialTheme
-                        .typography
-                        .bodyLarge,
+                    MaterialTheme.typography.bodyLarge,
                 fontWeight =
                     FontWeight.Bold,
                 color =
-                    MaterialTheme
-                        .colorScheme
-                        .onSurface
+                    MaterialTheme.colorScheme.onSurface
             )
 
             Text(
@@ -887,13 +803,9 @@ private fun MiniPlayer(
                 overflow =
                     TextOverflow.Ellipsis,
                 style =
-                    MaterialTheme
-                        .typography
-                        .bodyMedium,
+                    MaterialTheme.typography.bodyMedium,
                 color =
-                    MaterialTheme
-                        .colorScheme
-                        .onSurfaceVariant
+                    MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
 
@@ -990,12 +902,8 @@ private fun LandscapeMiniPlayer(
                     RoundedCornerShape(10.dp)
                 )
                 .background(
-                    MaterialTheme
-                        .colorScheme
-                        .primary
-                        .copy(
-                            alpha = 0.12f
-                        )
+                    MaterialTheme.colorScheme.primary
+                        .copy(alpha = 0.12f)
                 ),
             contentAlignment =
                 Alignment.Center
@@ -1003,15 +911,11 @@ private fun LandscapeMiniPlayer(
             Text(
                 text = "MEGA",
                 style =
-                    MaterialTheme
-                        .typography
-                        .labelLarge,
+                    MaterialTheme.typography.labelLarge,
                 fontWeight =
                     FontWeight.Bold,
                 color =
-                    MaterialTheme
-                        .colorScheme
-                        .primary
+                    MaterialTheme.colorScheme.primary
             )
         }
 
@@ -1025,15 +929,11 @@ private fun LandscapeMiniPlayer(
             overflow =
                 TextOverflow.Ellipsis,
             style =
-                MaterialTheme
-                    .typography
-                    .titleSmall,
+                MaterialTheme.typography.titleSmall,
             fontWeight =
                 FontWeight.Bold,
             color =
-                MaterialTheme
-                    .colorScheme
-                    .onSurface
+                MaterialTheme.colorScheme.onSurface
         )
 
         Text(
@@ -1042,13 +942,9 @@ private fun LandscapeMiniPlayer(
             overflow =
                 TextOverflow.Ellipsis,
             style =
-                MaterialTheme
-                    .typography
-                    .bodySmall,
+                MaterialTheme.typography.bodySmall,
             color =
-                MaterialTheme
-                    .colorScheme
-                    .onSurfaceVariant
+                MaterialTheme.colorScheme.onSurfaceVariant
         )
 
         Spacer(
@@ -1104,15 +1000,12 @@ private fun LandscapeMiniPlayer(
                 .border(
                     width = 1.dp,
                     color =
-                        MaterialTheme
-                            .colorScheme
-                            .primary,
+                        MaterialTheme.colorScheme.primary,
                     shape =
                         RoundedCornerShape(8.dp)
                 )
                 .semantics {
                     role = Role.Button
-
                     contentDescription =
                         openDescription
                 }
@@ -1129,15 +1022,11 @@ private fun LandscapeMiniPlayer(
                         R.string.open_player
                     ),
                 style =
-                    MaterialTheme
-                        .typography
-                        .labelMedium,
+                    MaterialTheme.typography.labelMedium,
                 fontWeight =
                     FontWeight.Bold,
                 color =
-                    MaterialTheme
-                        .colorScheme
-                        .primary
+                    MaterialTheme.colorScheme.primary
             )
         }
     }
@@ -1163,7 +1052,6 @@ private fun MiniPlayerButton(
             )
             .semantics {
                 role = Role.Button
-
                 contentDescription =
                     description
             }
@@ -1179,16 +1067,13 @@ private fun MiniPlayerButton(
     ) {
         Text(
             text = text,
+            maxLines = 1,
             style =
-                MaterialTheme
-                    .typography
-                    .labelSmall,
+                MaterialTheme.typography.labelSmall,
             fontWeight =
                 FontWeight.Bold,
             color =
-                MaterialTheme
-                    .colorScheme
-                    .onPrimary
+                MaterialTheme.colorScheme.onPrimary
         )
     }
 }
@@ -1248,12 +1133,8 @@ private fun NowPlayingPanel(
                     RoundedCornerShape(12.dp)
                 )
                 .background(
-                    MaterialTheme
-                        .colorScheme
-                        .primary
-                        .copy(
-                            alpha = 0.12f
-                        )
+                    MaterialTheme.colorScheme.primary
+                        .copy(alpha = 0.12f)
                 ),
             contentAlignment =
                 Alignment.Center
@@ -1261,15 +1142,11 @@ private fun NowPlayingPanel(
             Text(
                 text = "MEGA",
                 style =
-                    MaterialTheme
-                        .typography
-                        .headlineMedium,
+                    MaterialTheme.typography.headlineMedium,
                 fontWeight =
                     FontWeight.Bold,
                 color =
-                    MaterialTheme
-                        .colorScheme
-                        .primary
+                    MaterialTheme.colorScheme.primary
             )
         }
 
@@ -1283,15 +1160,11 @@ private fun NowPlayingPanel(
             overflow =
                 TextOverflow.Ellipsis,
             style =
-                MaterialTheme
-                    .typography
-                    .titleMedium,
+                MaterialTheme.typography.titleMedium,
             fontWeight =
                 FontWeight.Bold,
             color =
-                MaterialTheme
-                    .colorScheme
-                    .onSurface
+                MaterialTheme.colorScheme.onSurface
         )
 
         Spacer(
@@ -1304,13 +1177,9 @@ private fun NowPlayingPanel(
             overflow =
                 TextOverflow.Ellipsis,
             style =
-                MaterialTheme
-                    .typography
-                    .bodyMedium,
+                MaterialTheme.typography.bodyMedium,
             color =
-                MaterialTheme
-                    .colorScheme
-                    .onSurfaceVariant
+                MaterialTheme.colorScheme.onSurfaceVariant
         )
 
         Spacer(
@@ -1366,15 +1235,12 @@ private fun NowPlayingPanel(
                 .border(
                     width = 2.dp,
                     color =
-                        MaterialTheme
-                            .colorScheme
-                            .primary,
+                        MaterialTheme.colorScheme.primary,
                     shape =
                         RoundedCornerShape(8.dp)
                 )
                 .semantics {
                     role = Role.Button
-
                     contentDescription =
                         openDescription
                 }
@@ -1391,15 +1257,11 @@ private fun NowPlayingPanel(
                         R.string.open_player
                     ),
                 style =
-                    MaterialTheme
-                        .typography
-                        .labelLarge,
+                    MaterialTheme.typography.labelLarge,
                 fontWeight =
                     FontWeight.Bold,
                 color =
-                    MaterialTheme
-                        .colorScheme
-                        .primary
+                    MaterialTheme.colorScheme.primary
             )
         }
     }
@@ -1452,8 +1314,7 @@ private fun PlaylistRussianPortraitPreview() {
         darkTheme = false
     ) {
         PlaylistScreen(
-            tracks =
-                previewTracks,
+            tracks = previewTracks,
             playerState =
                 previewPlaylistState,
             windowWidthSizeClass =
@@ -1482,8 +1343,7 @@ private fun PlaylistEnglishPortraitPreview() {
         darkTheme = false
     ) {
         PlaylistScreen(
-            tracks =
-                previewTracks,
+            tracks = previewTracks,
             playerState =
                 previewPlaylistState,
             windowWidthSizeClass =
@@ -1512,8 +1372,7 @@ private fun PlaylistLandscapePreview() {
         darkTheme = false
     ) {
         PlaylistScreen(
-            tracks =
-                previewTracks,
+            tracks = previewTracks,
             playerState =
                 previewPlaylistState,
             windowWidthSizeClass =
@@ -1544,8 +1403,7 @@ private fun PlaylistLandscapeDarkPreview() {
         darkTheme = true
     ) {
         PlaylistScreen(
-            tracks =
-                previewTracks,
+            tracks = previewTracks,
             playerState =
                 previewPlaylistState,
             windowWidthSizeClass =
@@ -1574,8 +1432,7 @@ private fun PlaylistTabletPreview() {
         darkTheme = false
     ) {
         PlaylistScreen(
-            tracks =
-                previewTracks,
+            tracks = previewTracks,
             playerState =
                 previewPlaylistState,
             windowWidthSizeClass =
@@ -1604,8 +1461,7 @@ private fun PlaylistEmptyPreview() {
         darkTheme = false
     ) {
         PlaylistScreen(
-            tracks =
-                emptyList(),
+            tracks = emptyList(),
             playerState =
                 PlayerUiState.Empty,
             windowWidthSizeClass =

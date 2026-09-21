@@ -1,5 +1,4 @@
-package com.example.megax3player.ui.theme
-
+package com.example.megax3player.`val`
 import androidx.compose.ui.graphics.Color
 
 val KittyPinkLight = Color(0xFF9A3C52)

@@ -1,7 +1,7 @@
 package com.example.megax3player.model
 
-import androidx.annotation.RawRes
 import androidx.annotation.DrawableRes
+import androidx.annotation.RawRes
 
 data class Track(
     val id: Int,
