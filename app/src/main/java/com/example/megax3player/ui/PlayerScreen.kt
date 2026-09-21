@@ -46,6 +46,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 
 private enum class PlayerScreenMode {
     LOADING,
@@ -219,7 +224,7 @@ private fun CompactPlayer(
             fontSize = 9.sp,
             fontFamily = FontFamily.Monospace,
             letterSpacing = 2.sp,
-            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }
@@ -286,7 +291,6 @@ private fun WidePlayer(
         }
     }
 }
-
 @Composable
 private fun PlayerDisplay(
     state: PlayerUiState.Content,
@@ -318,13 +322,14 @@ private fun PlayerDisplay(
             onDarkThemeChange = onDarkThemeChange
         )
 
-        Spacer(Modifier.height(6.dp))
+        Spacer(Modifier.height(8.dp))
 
         TrackCover(
-            coverResId = state.track.coverResId
+            coverResId = state.track.coverResId,
+            title = state.track.title
         )
 
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(10.dp))
 
         Text(
             text = state.track.title,
@@ -332,24 +337,25 @@ private fun PlayerDisplay(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             textAlign = TextAlign.Center,
-            fontSize = 17.sp,
-            fontFamily = FontFamily.Monospace,
-            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.titleLarge.copy(
+                fontFamily = FontFamily.Monospace
+            ),
             color = MaterialTheme.colorScheme.onSurface
         )
 
-        Spacer(Modifier.height(2.dp))
+        Spacer(Modifier.height(3.dp))
 
         Text(
             text = state.track.artist,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            fontSize = 11.sp,
-            fontFamily = FontFamily.Monospace,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+            style = MaterialTheme.typography.bodyMedium.copy(
+                fontFamily = FontFamily.Monospace
+            ),
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
-        Spacer(Modifier.height(7.dp))
+        Spacer(Modifier.height(10.dp))
 
         ProgressSection(
             progress = progress,
@@ -359,7 +365,6 @@ private fun PlayerDisplay(
         )
     }
 }
-
 @Composable
 private fun PlayerStatusBar(
     darkTheme: Boolean,
@@ -372,27 +377,45 @@ private fun PlayerStatusBar(
         Text(
             text = "MEGA",
             modifier = Modifier.weight(1f),
-            fontSize = 9.sp,
-            fontFamily = FontFamily.Monospace,
+            style = MaterialTheme.typography.labelSmall.copy(
+                fontFamily = FontFamily.Monospace
+            ),
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
-        Text(
-            text = if (darkTheme) "DARK" else "LIGHT",
+        Box(
             modifier = Modifier
-                .clip(RoundedCornerShape(6.dp))
+                .sizeIn(
+                    minWidth = 48.dp,
+                    minHeight = 48.dp
+                )
+                .clip(RoundedCornerShape(8.dp))
+                .semantics {
+                    role = Role.Button
+                    contentDescription = "Переключить тему"
+                    stateDescription = if (darkTheme) {
+                        "Тёмная тема включена"
+                    } else {
+                        "Светлая тема включена"
+                    }
+                }
                 .clickable {
                     onDarkThemeChange(!darkTheme)
-                }
-                .padding(horizontal = 7.dp, vertical = 4.dp),
-            fontSize = 8.sp,
-            fontFamily = FontFamily.Monospace,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary
-        )
+                },
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = if (darkTheme) "DARK" else "LIGHT",
+                style = MaterialTheme.typography.labelSmall.copy(
+                    fontFamily = FontFamily.Monospace
+                ),
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
+        }
 
-        Spacer(Modifier.width(8.dp))
+        Spacer(Modifier.width(6.dp))
 
         BatteryIndicator()
     }
@@ -424,7 +447,8 @@ private fun BatteryIndicator() {
 
 @Composable
 private fun TrackCover(
-    coverResId: Int
+    coverResId: Int,
+    title: String
 ) {
     Box(
         modifier = Modifier
@@ -436,7 +460,7 @@ private fun TrackCover(
         if (coverResId != 0) {
             Image(
                 painter = painterResource(coverResId),
-                contentDescription = "Обложка трека",
+                contentDescription = "Обложка композиции $title",
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
             )
@@ -573,7 +597,6 @@ private fun KittyFace() {
         )
     }
 }
-
 @Composable
 private fun ProgressSection(
     progress: Float,
@@ -611,11 +634,14 @@ private fun ProgressSection(
             valueRange = 0f..1f,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(24.dp),
+                .height(48.dp)
+                .semantics {
+                    contentDescription = "Позиция воспроизведения"
+                },
             colors = SliderDefaults.colors(
                 thumbColor = MaterialTheme.colorScheme.primary,
                 activeTrackColor = MaterialTheme.colorScheme.primary,
-                inactiveTrackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.18f)
+                inactiveTrackColor = MaterialTheme.colorScheme.outline
             )
         )
 
@@ -646,9 +672,10 @@ private fun TimeText(
 ) {
     Text(
         text = text,
-        fontSize = 9.sp,
-        fontFamily = FontFamily.Monospace,
-        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.65f)
+        style = MaterialTheme.typography.labelSmall.copy(
+            fontFamily = FontFamily.Monospace
+        ),
+        color = MaterialTheme.colorScheme.onSurfaceVariant
     )
 }
 
@@ -713,9 +740,17 @@ private fun PlayerWheel(
                 .background(MaterialTheme.colorScheme.surfaceVariant)
                 .border(
                     width = 2.dp,
-                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f),
+                    color = MaterialTheme.colorScheme.outline,
                     shape = CircleShape
                 )
+                .semantics {
+                    role = Role.Button
+                    contentDescription = if (isPlaying) {
+                        "Поставить воспроизведение на паузу"
+                    } else {
+                        "Начать воспроизведение"
+                    }
+                }
                 .clickable(onClick = onPlayPause),
             contentAlignment = Alignment.Center
         ) {
@@ -730,17 +765,36 @@ private fun WheelButton(
     modifier: Modifier,
     onClick: () -> Unit
 ) {
-    Text(
-        text = text,
+    Box(
         modifier = modifier
+            .sizeIn(
+                minWidth = 48.dp,
+                minHeight = 48.dp
+            )
             .clip(RoundedCornerShape(8.dp))
-            .clickable(onClick = onClick)
-            .padding(7.dp),
-        fontSize = 10.sp,
-        fontFamily = FontFamily.Monospace,
-        fontWeight = FontWeight.Bold,
-        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.58f)
-    )
+            .semantics {
+                role = Role.Button
+                contentDescription = when (text) {
+                    "MENU" -> "Открыть плейлист"
+                    "PREV" -> "Предыдущий трек"
+                    "NEXT" -> "Следующий трек"
+                    "PLAY" -> "Воспроизвести"
+                    "PAUSE" -> "Пауза"
+                    else -> text
+                }
+            }
+            .clickable(onClick = onClick),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.labelSmall.copy(
+                fontFamily = FontFamily.Monospace
+            ),
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
 }
 
 @Composable
@@ -817,38 +871,53 @@ private fun SmallControl(
 ) {
     Box(
         modifier = Modifier
+            .sizeIn(
+                minWidth = 80.dp,
+                minHeight = 48.dp
+            )
             .clip(RoundedCornerShape(9.dp))
             .background(
                 if (selected) {
-                    MaterialTheme.colorScheme.primary.copy(alpha = 0.18f)
+                    MaterialTheme.colorScheme.primary.copy(alpha = 0.14f)
                 } else {
                     MaterialTheme.colorScheme.surface
                 }
             )
             .border(
-                width = 1.dp,
+                width = if (selected) 2.dp else 1.dp,
                 color = if (selected) {
                     MaterialTheme.colorScheme.primary
                 } else {
-                    MaterialTheme.colorScheme.outline.copy(alpha = 0.35f)
+                    MaterialTheme.colorScheme.outline
                 },
                 shape = RoundedCornerShape(9.dp)
             )
-            .clickable(onClick = onClick)
-            .padding(
-                horizontal = 12.dp,
-                vertical = 6.dp
-            )
+            .semantics {
+                role = Role.Button
+                contentDescription = when (text) {
+                    "SHUFFLE" -> "Случайный порядок"
+                    "REPEAT" -> "Повтор композиции"
+                    else -> text
+                }
+                stateDescription = if (selected) {
+                    "Включено"
+                } else {
+                    "Выключено"
+                }
+            }
+            .clickable(onClick = onClick),
+        contentAlignment = Alignment.Center
     ) {
         Text(
-            text = text,
-            fontSize = 8.sp,
-            fontFamily = FontFamily.Monospace,
-            fontWeight = if (selected) {
-                FontWeight.Bold
+            text = if (selected) {
+                "$text ON"
             } else {
-                FontWeight.Normal
+                "$text OFF"
             },
+            style = MaterialTheme.typography.labelSmall.copy(
+                fontFamily = FontFamily.Monospace
+            ),
+            fontWeight = FontWeight.Bold,
             color = if (selected) {
                 MaterialTheme.colorScheme.primary
             } else {
@@ -1268,9 +1337,9 @@ private fun PlayerEmpty(
 
                 Text(
                     text = "Ничего не играет",
-                    fontSize = 14.sp,
-                    fontFamily = FontFamily.Monospace,
-                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontFamily = FontFamily.Monospace
+                    ),
                     color = MaterialTheme.colorScheme.onSurface
                 )
 
@@ -1278,28 +1347,34 @@ private fun PlayerEmpty(
 
                 Text(
                     text = "Выберите композицию",
-                    fontSize = 9.sp,
-                    fontFamily = FontFamily.Monospace,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f)
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        fontFamily = FontFamily.Monospace
+                    ),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
                 Spacer(Modifier.height(18.dp))
 
                 Box(
                     modifier = Modifier
+                        .sizeIn(
+                            minWidth = 140.dp,
+                            minHeight = 48.dp
+                        )
                         .clip(RoundedCornerShape(8.dp))
                         .background(MaterialTheme.colorScheme.primary)
-                        .clickable(onClick = onOpenPlaylist)
-                        .padding(
-                            horizontal = 18.dp,
-                            vertical = 9.dp
-                        )
+                        .semantics {
+                            role = Role.Button
+                            contentDescription = "Открыть плейлист"
+                        }
+                        .clickable(onClick = onOpenPlaylist),
+                    contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = "PLAYLIST",
-                        fontSize = 10.sp,
-                        fontFamily = FontFamily.Monospace,
-                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.labelLarge.copy(
+                            fontFamily = FontFamily.Monospace
+                        ),
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                 }

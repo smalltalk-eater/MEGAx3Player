@@ -6,30 +6,40 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 
 private val LightColors = lightColorScheme(
-    primary = KittyPink,
+    primary = KittyPinkLight,
     onPrimary = IpodSilverLight,
+
     secondary = KittyYellow,
     onSecondary = IpodScreenText,
+
     background = IpodBlue,
     onBackground = IpodScreenText,
+
     surface = IpodScreen,
     onSurface = IpodScreenText,
+
     surfaceVariant = IpodSilver,
     onSurfaceVariant = IpodScreenText,
+
     outline = IpodOutline
 )
 
 private val DarkColors = darkColorScheme(
-    primary = KittyPink,
-    onPrimary = DarkText,
+    primary = KittyPinkDark,
+    onPrimary = DarkBackground,
+
     secondary = KittyYellow,
     onSecondary = DarkBackground,
+
     background = DarkBackground,
     onBackground = DarkText,
+
     surface = DarkScreen,
     onSurface = DarkText,
+
     surfaceVariant = DarkBody,
     onSurfaceVariant = DarkText,
+
     outline = DarkOutline
 )
 

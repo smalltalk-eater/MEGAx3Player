@@ -2,8 +2,8 @@ package com.example.megax3player.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val KittyPink = Color(0xFFE77989)
-val KittyPinkDark = Color(0xFFB95061)
+val KittyPinkLight = Color(0xFF9A3C52)
+val KittyPinkDark = Color(0xFFE77989)
 val KittyYellow = Color(0xFFF0C650)
 
 val IpodBlue = Color(0xFFD6E9FA)
