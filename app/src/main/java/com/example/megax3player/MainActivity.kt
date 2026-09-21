@@ -14,13 +14,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.core.os.LocaleListCompat
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.megax3player.data.ThemePreferences
 import com.example.megax3player.player.PlayerViewModel
 import com.example.megax3player.ui.PlayerScreen
 import com.example.megax3player.ui.PlaylistScreen
-import com.example.megax3player.ui.theme.MegaX3PlayerTheme
+import com.example.megax3player.`val`.MegaX3PlayerTheme
 import kotlinx.coroutines.launch
 
 private enum class Screen {
@@ -44,6 +46,9 @@ class MainActivity : AppCompatActivity() {
             val windowSizeClass =
                 calculateWindowSizeClass(this)
 
+            val configuration =
+                LocalConfiguration.current
+
             val systemDarkTheme =
                 isSystemInDarkTheme()
 
@@ -54,6 +59,17 @@ class MainActivity : AppCompatActivity() {
 
             val darkTheme =
                 savedDarkTheme ?: systemDarkTheme
+
+            WindowCompat.getInsetsController(
+                window,
+                window.decorView
+            ).apply {
+                isAppearanceLightStatusBars =
+                    !darkTheme
+
+                isAppearanceLightNavigationBars =
+                    !darkTheme
+            }
 
             val coroutineScope =
                 rememberCoroutineScope()
@@ -70,7 +86,7 @@ class MainActivity : AppCompatActivity() {
 
             val currentLanguage =
                 applicationLocales[0]?.language
-                    ?: resources.configuration.locales[0].language
+                    ?: configuration.locales[0].language
 
             val onLanguageChange: () -> Unit = {
                 val newLanguage =
@@ -96,27 +112,23 @@ class MainActivity : AppCompatActivity() {
                 ) { currentScreen ->
 
                     when (currentScreen) {
-
                         Screen.PLAYER -> {
                             PlayerScreen(
                                 state = playerState,
-
                                 darkTheme = darkTheme,
-
                                 currentLanguage =
                                     currentLanguage,
-
                                 windowWidthSizeClass =
                                     windowSizeClass.widthSizeClass,
-
                                 windowHeightSizeClass =
                                     windowSizeClass.heightSizeClass,
 
                                 onDarkThemeChange = { newDarkTheme ->
                                     coroutineScope.launch {
-                                        themePreferences.saveDarkTheme(
-                                            darkTheme = newDarkTheme
-                                        )
+                                        themePreferences
+                                            .saveDarkTheme(
+                                                newDarkTheme
+                                            )
                                     }
                                 },
 
@@ -129,7 +141,8 @@ class MainActivity : AppCompatActivity() {
                                 },
 
                                 onPlayPause = {
-                                    playerViewModel.playPause()
+                                    playerViewModel
+                                        .playPause()
                                 },
 
                                 onNext = {
@@ -137,21 +150,23 @@ class MainActivity : AppCompatActivity() {
                                 },
 
                                 onPrevious = {
-                                    playerViewModel.previous()
+                                    playerViewModel
+                                        .previous()
                                 },
 
                                 onSeek = { progress ->
-                                    playerViewModel.seekTo(
-                                        progress
-                                    )
+                                    playerViewModel
+                                        .seekTo(progress)
                                 },
 
                                 onShuffle = {
-                                    playerViewModel.toggleShuffle()
+                                    playerViewModel
+                                        .toggleShuffle()
                                 },
 
                                 onRepeat = {
-                                    playerViewModel.toggleRepeat()
+                                    playerViewModel
+                                        .toggleRepeat()
                                 }
                             )
                         }
@@ -159,7 +174,8 @@ class MainActivity : AppCompatActivity() {
                         Screen.PLAYLIST -> {
                             PlaylistScreen(
                                 tracks =
-                                    playerViewModel.getTracks(),
+                                    playerViewModel
+                                        .getTracks(),
 
                                 playerState =
                                     playerState,
@@ -176,17 +192,18 @@ class MainActivity : AppCompatActivity() {
                                 },
 
                                 onTrackClick = { track ->
-                                    playerViewModel.playTrack(
-                                        track
-                                    )
+                                    playerViewModel
+                                        .playTrack(track)
                                 },
 
                                 onPlayPause = {
-                                    playerViewModel.playPause()
+                                    playerViewModel
+                                        .playPause()
                                 },
 
                                 onNext = {
-                                    playerViewModel.next()
+                                    playerViewModel
+                                        .next()
                                 },
 
                                 onOpenPlayer = {

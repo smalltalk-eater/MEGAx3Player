@@ -181,14 +181,6 @@ private fun CompactPlayer(
 
         Spacer(Modifier.height(8.dp))
 
-        Text(
-            text = "MEGAx3Player",
-            style = MaterialTheme.typography.labelSmall.copy(
-                fontFamily = FontFamily.Monospace,
-                letterSpacing = 2.sp
-            ),
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
     }
 }
 
@@ -267,13 +259,6 @@ private fun LandscapePlayer(
 
             Spacer(Modifier.height(4.dp))
 
-            Text(
-                text = "MEGAx3Player",
-                style = MaterialTheme.typography.labelSmall.copy(
-                    fontFamily = FontFamily.Monospace
-                ),
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
         }
     }
 }

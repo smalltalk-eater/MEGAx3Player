@@ -225,37 +225,6 @@ private fun PlayerStatusBar(
         }
 
         Spacer(Modifier.width(4.dp))
-
-        BatteryIndicator()
-    }
-}
-
-@Composable
-private fun BatteryIndicator() {
-    val description = stringResource(R.string.battery_72)
-
-    Box(
-        modifier = Modifier
-            .width(26.dp)
-            .height(12.dp)
-            .border(
-                1.dp,
-                MaterialTheme.colorScheme.onSurfaceVariant,
-                RoundedCornerShape(2.dp)
-            )
-            .padding(2.dp)
-            .semantics {
-                contentDescription = description
-            }
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxHeight()
-                .fillMaxWidth(0.72f)
-                .background(
-                    MaterialTheme.colorScheme.onSurfaceVariant
-                )
-        )
     }
 }
 

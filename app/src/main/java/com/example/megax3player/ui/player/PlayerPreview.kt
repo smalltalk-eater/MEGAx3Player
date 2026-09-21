@@ -8,7 +8,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.megax3player.model.Track
 import com.example.megax3player.ui.PlayerScreen
 import com.example.megax3player.ui.PlayerUiState
-import com.example.megax3player.ui.theme.MegaX3PlayerTheme
+import com.example.megax3player.`val`.MegaX3PlayerTheme
 
 private val previewTrack = Track(
     id = 1,
