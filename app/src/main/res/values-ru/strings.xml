@@ -1,0 +1,65 @@
+<resources>
+    <string name="app_name">MEGAx3Player</string>
+
+    <string name="language_short">RU</string>
+    <string name="switch_language">Переключить язык</string>
+    <string name="language_state">Русский</string>
+
+    <string name="theme_light">СВЕТ</string>
+    <string name="theme_dark">ТЕМН</string>
+    <string name="switch_theme">Переключить тему</string>
+    <string name="light_theme_enabled">Светлая тема включена</string>
+    <string name="dark_theme_enabled">Тёмная тема включена</string>
+
+    <string name="menu">МЕНЮ</string>
+    <string name="previous">НАЗАД</string>
+    <string name="next">ДАЛЕЕ</string>
+    <string name="play">ПУСК</string>
+    <string name="pause">ПАУЗА</string>
+
+    <string name="open_playlist">Открыть плейлист</string>
+    <string name="previous_track">Предыдущий трек</string>
+    <string name="next_track">Следующий трек</string>
+    <string name="start_playback">Начать воспроизведение</string>
+    <string name="pause_playback">Поставить воспроизведение на паузу</string>
+
+    <string name="shuffle">СЛУЧАЙНО</string>
+    <string name="repeat">ПОВТОР</string>
+    <string name="on">ВКЛ</string>
+    <string name="off">ВЫКЛ</string>
+    <string name="enabled">Включено</string>
+    <string name="disabled">Выключено</string>
+    <string name="shuffle_description">Случайный порядок воспроизведения</string>
+    <string name="repeat_description">Повтор текущей композиции</string>
+
+    <string name="playback_position">Позиция воспроизведения</string>
+    <string name="battery_72">Индикатор батареи, 72 процента</string>
+    <string name="track_cover">Обложка композиции %1$s</string>
+
+    <string name="nothing_playing">Ничего не играет</string>
+    <string name="choose_track">Выберите композицию</string>
+    <string name="choose_track_long">Выберите композицию в плейлисте, чтобы начать воспроизведение.</string>
+    <string name="playlist_action">ПЛЕЙЛИСТ</string>
+
+    <string name="playlist">Плейлист</string>
+    <string name="my_music">Моя музыка</string>
+    <string name="back_to_player">Вернуться к плееру</string>
+
+    <plurals name="track_count">
+        <item quantity="one">%d трек</item>
+        <item quantity="few">%d трека</item>
+        <item quantity="many">%d треков</item>
+        <item quantity="other">%d треков</item>
+    </plurals>
+
+    <string name="playing">Играет</string>
+    <string name="currently_playing">Сейчас играет</string>
+    <string name="not_selected">Не выбран</string>
+    <string name="track_description">%1$s, %2$s, длительность %3$s</string>
+
+    <string name="empty_playlist">Плейлист пуст</string>
+    <string name="empty_playlist_description">Здесь появятся доступные композиции</string>
+
+    <string name="open_player">Открыть плеер</string>
+    <string name="open_full_player">Открыть полный экран плеера</string>
+</resources>
