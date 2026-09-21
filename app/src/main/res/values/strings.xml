@@ -1,3 +1,63 @@
 <resources>
     <string name="app_name">MEGAx3Player</string>
+
+    <string name="language_short">EN</string>
+    <string name="switch_language">Switch language</string>
+    <string name="language_state">English</string>
+
+    <string name="theme_light">LIGHT</string>
+    <string name="theme_dark">DARK</string>
+    <string name="switch_theme">Switch theme</string>
+    <string name="light_theme_enabled">Light theme enabled</string>
+    <string name="dark_theme_enabled">Dark theme enabled</string>
+
+    <string name="menu">MENU</string>
+    <string name="previous">PREV</string>
+    <string name="next">NEXT</string>
+    <string name="play">PLAY</string>
+    <string name="pause">PAUSE</string>
+
+    <string name="open_playlist">Open playlist</string>
+    <string name="previous_track">Previous track</string>
+    <string name="next_track">Next track</string>
+    <string name="start_playback">Start playback</string>
+    <string name="pause_playback">Pause playback</string>
+
+    <string name="shuffle">SHUFFLE</string>
+    <string name="repeat">REPEAT</string>
+    <string name="on">ON</string>
+    <string name="off">OFF</string>
+    <string name="enabled">Enabled</string>
+    <string name="disabled">Disabled</string>
+    <string name="shuffle_description">Shuffle playback</string>
+    <string name="repeat_description">Repeat current track</string>
+
+    <string name="playback_position">Playback position</string>
+    <string name="battery_72">Battery, 72 percent</string>
+    <string name="track_cover">Cover of %1$s</string>
+
+    <string name="nothing_playing">Nothing is playing</string>
+    <string name="choose_track">Choose a track</string>
+    <string name="choose_track_long">Choose a track from the playlist to start playback.</string>
+    <string name="playlist_action">PLAYLIST</string>
+
+    <string name="playlist">Playlist</string>
+    <string name="my_music">My music</string>
+    <string name="back_to_player">Back to player</string>
+
+    <plurals name="track_count">
+        <item quantity="one">%d track</item>
+        <item quantity="other">%d tracks</item>
+    </plurals>
+
+    <string name="playing">Playing</string>
+    <string name="currently_playing">Currently playing</string>
+    <string name="not_selected">Not selected</string>
+    <string name="track_description">%1$s, %2$s, duration %3$s</string>
+
+    <string name="empty_playlist">Playlist is empty</string>
+    <string name="empty_playlist_description">Available tracks will appear here</string>
+
+    <string name="open_player">Open player</string>
+    <string name="open_full_player">Open full player</string>
 </resources>
