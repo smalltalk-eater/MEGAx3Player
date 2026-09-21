@@ -1,22 +1,32 @@
 package com.example.megax3player.ui
 
+import android.content.res.Configuration
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.ui.draw.alpha
-import android.content.res.Configuration
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.megax3player.model.Track
-import com.example.megax3player.ui.theme.MegaX3PlayerTheme
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -33,6 +43,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
@@ -40,17 +51,20 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.megax3player.model.Track
+import com.example.megax3player.ui.theme.MegaX3PlayerTheme
 
 private enum class PlayerScreenMode {
     LOADING,
@@ -90,11 +104,18 @@ fun PlayerScreen(
             label = "playerState"
         ) { mode ->
             when (mode) {
-                PlayerScreenMode.LOADING -> PlayerLoading()
+                PlayerScreenMode.LOADING -> {
+                    PlayerLoading(
+                        windowWidthSizeClass = windowWidthSizeClass
+                    )
+                }
 
-                PlayerScreenMode.EMPTY -> PlayerEmpty(
-                    onOpenPlaylist = onOpenPlaylist
-                )
+                PlayerScreenMode.EMPTY -> {
+                    PlayerEmpty(
+                        windowWidthSizeClass = windowWidthSizeClass,
+                        onOpenPlaylist = onOpenPlaylist
+                    )
+                }
 
                 PlayerScreenMode.CONTENT -> {
                     val content = state as? PlayerUiState.Content
@@ -134,32 +155,69 @@ private fun PlayerDevice(
     onShuffle: () -> Unit,
     onRepeat: () -> Unit
 ) {
-    if (windowWidthSizeClass == WindowWidthSizeClass.Compact) {
-        CompactPlayer(
-            state = state,
-            darkTheme = darkTheme,
-            onDarkThemeChange = onDarkThemeChange,
-            onOpenPlaylist = onOpenPlaylist,
-            onPlayPause = onPlayPause,
-            onNext = onNext,
-            onPrevious = onPrevious,
-            onSeek = onSeek,
-            onShuffle = onShuffle,
-            onRepeat = onRepeat
-        )
-    } else {
-        WidePlayer(
-            state = state,
-            darkTheme = darkTheme,
-            onDarkThemeChange = onDarkThemeChange,
-            onOpenPlaylist = onOpenPlaylist,
-            onPlayPause = onPlayPause,
-            onNext = onNext,
-            onPrevious = onPrevious,
-            onSeek = onSeek,
-            onShuffle = onShuffle,
-            onRepeat = onRepeat
-        )
+    when (windowWidthSizeClass) {
+        WindowWidthSizeClass.Compact -> {
+            CompactPlayer(
+                state = state,
+                darkTheme = darkTheme,
+                maxWidthDp = 390,
+                onDarkThemeChange = onDarkThemeChange,
+                onOpenPlaylist = onOpenPlaylist,
+                onPlayPause = onPlayPause,
+                onNext = onNext,
+                onPrevious = onPrevious,
+                onSeek = onSeek,
+                onShuffle = onShuffle,
+                onRepeat = onRepeat
+            )
+        }
+
+        WindowWidthSizeClass.Medium -> {
+            CompactPlayer(
+                state = state,
+                darkTheme = darkTheme,
+                maxWidthDp = 520,
+                onDarkThemeChange = onDarkThemeChange,
+                onOpenPlaylist = onOpenPlaylist,
+                onPlayPause = onPlayPause,
+                onNext = onNext,
+                onPrevious = onPrevious,
+                onSeek = onSeek,
+                onShuffle = onShuffle,
+                onRepeat = onRepeat
+            )
+        }
+
+        WindowWidthSizeClass.Expanded -> {
+            WidePlayer(
+                state = state,
+                darkTheme = darkTheme,
+                onDarkThemeChange = onDarkThemeChange,
+                onOpenPlaylist = onOpenPlaylist,
+                onPlayPause = onPlayPause,
+                onNext = onNext,
+                onPrevious = onPrevious,
+                onSeek = onSeek,
+                onShuffle = onShuffle,
+                onRepeat = onRepeat
+            )
+        }
+
+        else -> {
+            CompactPlayer(
+                state = state,
+                darkTheme = darkTheme,
+                maxWidthDp = 390,
+                onDarkThemeChange = onDarkThemeChange,
+                onOpenPlaylist = onOpenPlaylist,
+                onPlayPause = onPlayPause,
+                onNext = onNext,
+                onPrevious = onPrevious,
+                onSeek = onSeek,
+                onShuffle = onShuffle,
+                onRepeat = onRepeat
+            )
+        }
     }
 }
 
@@ -167,6 +225,7 @@ private fun PlayerDevice(
 private fun CompactPlayer(
     state: PlayerUiState.Content,
     darkTheme: Boolean,
+    maxWidthDp: Int,
     onDarkThemeChange: (Boolean) -> Unit,
     onOpenPlaylist: () -> Unit,
     onPlayPause: () -> Unit,
@@ -179,7 +238,7 @@ private fun CompactPlayer(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .widthIn(max = 390.dp)
+            .widthIn(max = maxWidthDp.dp)
             .fillMaxHeight()
             .clip(RoundedCornerShape(28.dp))
             .background(MaterialTheme.colorScheme.surfaceVariant)
@@ -198,7 +257,9 @@ private fun CompactPlayer(
             onSeek = onSeek
         )
 
-        Spacer(Modifier.weight(1f))
+        Spacer(
+            modifier = Modifier.weight(1f)
+        )
 
         PlayerWheel(
             isPlaying = state.isPlaying,
@@ -208,7 +269,9 @@ private fun CompactPlayer(
             onNext = onNext
         )
 
-        Spacer(Modifier.height(14.dp))
+        Spacer(
+            modifier = Modifier.height(10.dp)
+        )
 
         SecondaryControls(
             shuffle = state.shuffle,
@@ -217,13 +280,16 @@ private fun CompactPlayer(
             onRepeat = onRepeat
         )
 
-        Spacer(Modifier.height(10.dp))
+        Spacer(
+            modifier = Modifier.height(8.dp)
+        )
 
         Text(
             text = "MEGAx3Player",
-            fontSize = 9.sp,
-            fontFamily = FontFamily.Monospace,
-            letterSpacing = 2.sp,
+            style = MaterialTheme.typography.labelSmall.copy(
+                fontFamily = FontFamily.Monospace,
+                letterSpacing = 2.sp
+            ),
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
@@ -280,7 +346,9 @@ private fun WidePlayer(
                 onNext = onNext
             )
 
-            Spacer(Modifier.height(18.dp))
+            Spacer(
+                modifier = Modifier.height(18.dp)
+            )
 
             SecondaryControls(
                 shuffle = state.shuffle,
@@ -291,6 +359,7 @@ private fun WidePlayer(
         }
     }
 }
+
 @Composable
 private fun PlayerDisplay(
     state: PlayerUiState.Content,
@@ -322,14 +391,18 @@ private fun PlayerDisplay(
             onDarkThemeChange = onDarkThemeChange
         )
 
-        Spacer(Modifier.height(8.dp))
+        Spacer(
+            modifier = Modifier.height(8.dp)
+        )
 
         TrackCover(
             coverResId = state.track.coverResId,
             title = state.track.title
         )
 
-        Spacer(Modifier.height(10.dp))
+        Spacer(
+            modifier = Modifier.height(10.dp)
+        )
 
         Text(
             text = state.track.title,
@@ -343,7 +416,9 @@ private fun PlayerDisplay(
             color = MaterialTheme.colorScheme.onSurface
         )
 
-        Spacer(Modifier.height(3.dp))
+        Spacer(
+            modifier = Modifier.height(3.dp)
+        )
 
         Text(
             text = state.track.artist,
@@ -355,7 +430,9 @@ private fun PlayerDisplay(
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
-        Spacer(Modifier.height(10.dp))
+        Spacer(
+            modifier = Modifier.height(8.dp)
+        )
 
         ProgressSection(
             progress = progress,
@@ -365,6 +442,7 @@ private fun PlayerDisplay(
         )
     }
 }
+
 @Composable
 private fun PlayerStatusBar(
     darkTheme: Boolean,
@@ -387,7 +465,7 @@ private fun PlayerStatusBar(
         Box(
             modifier = Modifier
                 .sizeIn(
-                    minWidth = 48.dp,
+                    minWidth = 56.dp,
                     minHeight = 48.dp
                 )
                 .clip(RoundedCornerShape(8.dp))
@@ -400,13 +478,19 @@ private fun PlayerStatusBar(
                         "Светлая тема включена"
                     }
                 }
-                .clickable {
+                .clickable(
+                    role = Role.Button
+                ) {
                     onDarkThemeChange(!darkTheme)
                 },
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = if (darkTheme) "DARK" else "LIGHT",
+                text = if (darkTheme) {
+                    "DARK"
+                } else {
+                    "LIGHT"
+                },
                 style = MaterialTheme.typography.labelSmall.copy(
                     fontFamily = FontFamily.Monospace
                 ),
@@ -415,7 +499,9 @@ private fun PlayerStatusBar(
             )
         }
 
-        Spacer(Modifier.width(6.dp))
+        Spacer(
+            modifier = Modifier.width(6.dp)
+        )
 
         BatteryIndicator()
     }
@@ -425,21 +511,24 @@ private fun PlayerStatusBar(
 private fun BatteryIndicator() {
     Box(
         modifier = Modifier
-            .width(24.dp)
-            .height(11.dp)
+            .width(26.dp)
+            .height(12.dp)
             .border(
                 width = 1.dp,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 shape = RoundedCornerShape(2.dp)
             )
             .padding(2.dp)
+            .semantics {
+                contentDescription = "Индикатор батареи, 72 процента"
+            }
     ) {
         Box(
             modifier = Modifier
                 .fillMaxHeight()
                 .fillMaxWidth(0.72f)
                 .background(
-                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                    MaterialTheme.colorScheme.onSurfaceVariant
                 )
         )
     }
@@ -454,13 +543,16 @@ private fun TrackCover(
         modifier = Modifier
             .size(145.dp)
             .clip(RoundedCornerShape(12.dp))
-            .background(MaterialTheme.colorScheme.surfaceVariant),
+            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .semantics {
+                contentDescription = "Обложка композиции $title"
+            },
         contentAlignment = Alignment.Center
     ) {
         if (coverResId != 0) {
             Image(
                 painter = painterResource(coverResId),
-                contentDescription = "Обложка композиции $title",
+                contentDescription = null,
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
             )
@@ -517,7 +609,10 @@ private fun KittyFace() {
                 width = w * 0.66f,
                 height = h * 0.57f
             ),
-            cornerRadius = CornerRadius(w * 0.20f)
+            cornerRadius = CornerRadius(
+                x = w * 0.20f,
+                y = w * 0.20f
+            )
         )
 
         drawCircle(
@@ -552,51 +647,91 @@ private fun KittyFace() {
 
         drawLine(
             color = outlineColor,
-            start = Offset(w * 0.29f, h * 0.57f),
-            end = Offset(w * 0.08f, h * 0.52f),
+            start = Offset(
+                x = w * 0.29f,
+                y = h * 0.57f
+            ),
+            end = Offset(
+                x = w * 0.08f,
+                y = h * 0.52f
+            ),
             strokeWidth = 3f
         )
 
         drawLine(
             color = outlineColor,
-            start = Offset(w * 0.29f, h * 0.63f),
-            end = Offset(w * 0.07f, h * 0.65f),
+            start = Offset(
+                x = w * 0.29f,
+                y = h * 0.63f
+            ),
+            end = Offset(
+                x = w * 0.07f,
+                y = h * 0.65f
+            ),
             strokeWidth = 3f
         )
 
         drawLine(
             color = outlineColor,
-            start = Offset(w * 0.71f, h * 0.57f),
-            end = Offset(w * 0.92f, h * 0.52f),
+            start = Offset(
+                x = w * 0.71f,
+                y = h * 0.57f
+            ),
+            end = Offset(
+                x = w * 0.92f,
+                y = h * 0.52f
+            ),
             strokeWidth = 3f
         )
 
         drawLine(
             color = outlineColor,
-            start = Offset(w * 0.71f, h * 0.63f),
-            end = Offset(w * 0.93f, h * 0.65f),
+            start = Offset(
+                x = w * 0.71f,
+                y = h * 0.63f
+            ),
+            end = Offset(
+                x = w * 0.93f,
+                y = h * 0.65f
+            ),
             strokeWidth = 3f
         )
 
         drawOval(
             color = bowColor,
-            topLeft = Offset(w * 0.60f, h * 0.14f),
-            size = Size(w * 0.17f, h * 0.18f)
+            topLeft = Offset(
+                x = w * 0.60f,
+                y = h * 0.14f
+            ),
+            size = Size(
+                width = w * 0.17f,
+                height = h * 0.18f
+            )
         )
 
         drawOval(
             color = bowColor,
-            topLeft = Offset(w * 0.75f, h * 0.16f),
-            size = Size(w * 0.17f, h * 0.18f)
+            topLeft = Offset(
+                x = w * 0.75f,
+                y = h * 0.16f
+            ),
+            size = Size(
+                width = w * 0.17f,
+                height = h * 0.18f
+            )
         )
 
         drawCircle(
             color = bowColor,
             radius = w * 0.055f,
-            center = Offset(w * 0.75f, h * 0.24f)
+            center = Offset(
+                x = w * 0.75f,
+                y = h * 0.24f
+            )
         )
     }
 }
+
 @Composable
 private fun ProgressSection(
     progress: Float,
@@ -612,7 +747,10 @@ private fun ProgressSection(
         mutableStateOf(false)
     }
 
-    LaunchedEffect(progress, isSeeking) {
+    LaunchedEffect(
+        progress,
+        isSeeking
+    ) {
         if (!isSeeking) {
             sliderValue = progress
         }
@@ -622,7 +760,10 @@ private fun ProgressSection(
         modifier = Modifier.fillMaxWidth()
     ) {
         Slider(
-            value = sliderValue.coerceIn(0f, 1f),
+            value = sliderValue.coerceIn(
+                minimumValue = 0f,
+                maximumValue = 1f
+            ),
             onValueChange = {
                 isSeeking = true
                 sliderValue = it
@@ -650,17 +791,25 @@ private fun ProgressSection(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             TimeText(
-                text = if (isSeeking && durationMs > 0L) {
+                text = if (
+                    isSeeking &&
+                    durationMs > 0L
+                ) {
                     formatTime(
-                        (durationMs * sliderValue).toLong()
+                        milliseconds =
+                            (durationMs * sliderValue).toLong()
                     )
                 } else {
-                    formatTime(positionMs)
+                    formatTime(
+                        milliseconds = positionMs
+                    )
                 }
             )
 
             TimeText(
-                text = formatTime(durationMs)
+                text = formatTime(
+                    milliseconds = durationMs
+                )
             )
         }
     }
@@ -696,39 +845,51 @@ private fun PlayerWheel(
             .background(MaterialTheme.colorScheme.surface)
             .border(
                 width = 2.dp,
-                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+                color = MaterialTheme.colorScheme.outline,
                 shape = CircleShape
             )
     ) {
         WheelButton(
             text = "MENU",
+            description = "Открыть плейлист",
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .padding(top = 17.dp),
+                .padding(top = 8.dp),
             onClick = onOpenPlaylist
         )
 
         WheelButton(
             text = "PREV",
+            description = "Предыдущий трек",
             modifier = Modifier
                 .align(Alignment.CenterStart)
-                .padding(start = 10.dp),
+                .padding(start = 4.dp),
             onClick = onPrevious
         )
 
         WheelButton(
             text = "NEXT",
+            description = "Следующий трек",
             modifier = Modifier
                 .align(Alignment.CenterEnd)
-                .padding(end = 10.dp),
+                .padding(end = 4.dp),
             onClick = onNext
         )
 
         WheelButton(
-            text = if (isPlaying) "PAUSE" else "PLAY",
+            text = if (isPlaying) {
+                "PAUSE"
+            } else {
+                "PLAY"
+            },
+            description = if (isPlaying) {
+                "Поставить воспроизведение на паузу"
+            } else {
+                "Начать воспроизведение"
+            },
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 17.dp),
+                .padding(bottom = 8.dp),
             onClick = onPlayPause
         )
 
@@ -751,7 +912,10 @@ private fun PlayerWheel(
                         "Начать воспроизведение"
                     }
                 }
-                .clickable(onClick = onPlayPause),
+                .clickable(
+                    role = Role.Button,
+                    onClick = onPlayPause
+                ),
             contentAlignment = Alignment.Center
         ) {
             BowMark()
@@ -762,6 +926,7 @@ private fun PlayerWheel(
 @Composable
 private fun WheelButton(
     text: String,
+    description: String,
     modifier: Modifier,
     onClick: () -> Unit
 ) {
@@ -774,16 +939,12 @@ private fun WheelButton(
             .clip(RoundedCornerShape(8.dp))
             .semantics {
                 role = Role.Button
-                contentDescription = when (text) {
-                    "MENU" -> "Открыть плейлист"
-                    "PREV" -> "Предыдущий трек"
-                    "NEXT" -> "Следующий трек"
-                    "PLAY" -> "Воспроизвести"
-                    "PAUSE" -> "Пауза"
-                    else -> text
-                }
+                contentDescription = description
             }
-            .clickable(onClick = onClick),
+            .clickable(
+                role = Role.Button,
+                onClick = onClick
+            ),
         contentAlignment = Alignment.Center
     ) {
         Text(
@@ -807,24 +968,24 @@ private fun BowMark() {
         drawOval(
             color = color,
             topLeft = Offset(
-                size.width * 0.05f,
-                size.height * 0.23f
+                x = size.width * 0.05f,
+                y = size.height * 0.23f
             ),
             size = Size(
-                size.width * 0.40f,
-                size.height * 0.54f
+                width = size.width * 0.40f,
+                height = size.height * 0.54f
             )
         )
 
         drawOval(
             color = color,
             topLeft = Offset(
-                size.width * 0.55f,
-                size.height * 0.23f
+                x = size.width * 0.55f,
+                y = size.height * 0.23f
             ),
             size = Size(
-                size.width * 0.40f,
-                size.height * 0.54f
+                width = size.width * 0.40f,
+                height = size.height * 0.54f
             )
         )
 
@@ -832,8 +993,8 @@ private fun BowMark() {
             color = color,
             radius = size.width * 0.16f,
             center = Offset(
-                size.width / 2f,
-                size.height / 2f
+                x = size.width / 2f,
+                y = size.height / 2f
             )
         )
     }
@@ -851,12 +1012,14 @@ private fun SecondaryControls(
     ) {
         SmallControl(
             text = "SHUFFLE",
+            description = "Случайный порядок воспроизведения",
             selected = shuffle,
             onClick = onShuffle
         )
 
         SmallControl(
             text = "REPEAT",
+            description = "Повтор текущей композиции",
             selected = repeat,
             onClick = onRepeat
         )
@@ -866,25 +1029,32 @@ private fun SecondaryControls(
 @Composable
 private fun SmallControl(
     text: String,
+    description: String,
     selected: Boolean,
     onClick: () -> Unit
 ) {
     Box(
         modifier = Modifier
             .sizeIn(
-                minWidth = 80.dp,
+                minWidth = 88.dp,
                 minHeight = 48.dp
             )
             .clip(RoundedCornerShape(9.dp))
             .background(
                 if (selected) {
-                    MaterialTheme.colorScheme.primary.copy(alpha = 0.14f)
+                    MaterialTheme.colorScheme.primary.copy(
+                        alpha = 0.12f
+                    )
                 } else {
                     MaterialTheme.colorScheme.surface
                 }
             )
             .border(
-                width = if (selected) 2.dp else 1.dp,
+                width = if (selected) {
+                    2.dp
+                } else {
+                    1.dp
+                },
                 color = if (selected) {
                     MaterialTheme.colorScheme.primary
                 } else {
@@ -894,18 +1064,17 @@ private fun SmallControl(
             )
             .semantics {
                 role = Role.Button
-                contentDescription = when (text) {
-                    "SHUFFLE" -> "Случайный порядок"
-                    "REPEAT" -> "Повтор композиции"
-                    else -> text
-                }
+                contentDescription = description
                 stateDescription = if (selected) {
                     "Включено"
                 } else {
                     "Выключено"
                 }
             }
-            .clickable(onClick = onClick),
+            .clickable(
+                role = Role.Button,
+                onClick = onClick
+            ),
         contentAlignment = Alignment.Center
     ) {
         Text(
@@ -928,7 +1097,9 @@ private fun SmallControl(
 }
 
 @Composable
-private fun PlayerLoading() {
+private fun PlayerLoading(
+    windowWidthSizeClass: WindowWidthSizeClass
+) {
     val transition = rememberInfiniteTransition(
         label = "loadingPulse"
     )
@@ -937,36 +1108,58 @@ private fun PlayerLoading() {
         initialValue = 0.45f,
         targetValue = 0.9f,
         animationSpec = infiniteRepeatable(
-            animation = tween(900),
+            animation = tween(
+                durationMillis = 900
+            ),
             repeatMode = RepeatMode.Reverse
         ),
         label = "loadingAlpha"
     )
 
-    BoxWithConstraints(
+    Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        if (maxWidth < 600.dp) {
-            CompactLoadingPlayer(
-                pulse = pulse
-            )
-        } else {
-            WideLoadingPlayer(
-                pulse = pulse
-            )
+        when (windowWidthSizeClass) {
+            WindowWidthSizeClass.Compact -> {
+                CompactLoadingPlayer(
+                    pulse = pulse,
+                    maxWidthDp = 390
+                )
+            }
+
+            WindowWidthSizeClass.Medium -> {
+                CompactLoadingPlayer(
+                    pulse = pulse,
+                    maxWidthDp = 520
+                )
+            }
+
+            WindowWidthSizeClass.Expanded -> {
+                WideLoadingPlayer(
+                    pulse = pulse
+                )
+            }
+
+            else -> {
+                CompactLoadingPlayer(
+                    pulse = pulse,
+                    maxWidthDp = 390
+                )
+            }
         }
     }
 }
 
 @Composable
 private fun CompactLoadingPlayer(
-    pulse: Float
+    pulse: Float,
+    maxWidthDp: Int
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .widthIn(max = 390.dp)
+            .widthIn(max = maxWidthDp.dp)
             .fillMaxHeight()
             .clip(RoundedCornerShape(28.dp))
             .background(MaterialTheme.colorScheme.surfaceVariant)
@@ -992,35 +1185,21 @@ private fun CompactLoadingPlayer(
         )
 
         Spacer(
-            modifier = Modifier.height(14.dp)
+            modifier = Modifier.height(10.dp)
         )
 
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            SkeletonBlock(
-                modifier = Modifier
-                    .width(76.dp)
-                    .height(25.dp),
-                pulse = pulse
-            )
-
-            SkeletonBlock(
-                modifier = Modifier
-                    .width(76.dp)
-                    .height(25.dp),
-                pulse = pulse
-            )
-        }
+        LoadingSecondaryControls(
+            pulse = pulse
+        )
 
         Spacer(
-            modifier = Modifier.height(12.dp)
+            modifier = Modifier.height(8.dp)
         )
 
         SkeletonBlock(
             modifier = Modifier
                 .width(110.dp)
-                .height(8.dp),
+                .height(10.dp),
             pulse = pulse
         )
     }
@@ -1062,23 +1241,9 @@ private fun WideLoadingPlayer(
                 modifier = Modifier.height(18.dp)
             )
 
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                SkeletonBlock(
-                    modifier = Modifier
-                        .width(76.dp)
-                        .height(25.dp),
-                    pulse = pulse
-                )
-
-                SkeletonBlock(
-                    modifier = Modifier
-                        .width(76.dp)
-                        .height(25.dp),
-                    pulse = pulse
-                )
-            }
+            LoadingSecondaryControls(
+                pulse = pulse
+            )
         }
     }
 }
@@ -1101,13 +1266,15 @@ private fun LoadingDisplay(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             SkeletonBlock(
                 modifier = Modifier
                     .width(42.dp)
-                    .height(8.dp),
+                    .height(10.dp),
                 pulse = pulse
             )
 
@@ -1117,8 +1284,8 @@ private fun LoadingDisplay(
 
             SkeletonBlock(
                 modifier = Modifier
-                    .width(38.dp)
-                    .height(8.dp),
+                    .width(56.dp)
+                    .height(32.dp),
                 pulse = pulse
             )
 
@@ -1128,19 +1295,18 @@ private fun LoadingDisplay(
 
             SkeletonBlock(
                 modifier = Modifier
-                    .width(24.dp)
-                    .height(10.dp),
+                    .width(26.dp)
+                    .height(12.dp),
                 pulse = pulse
             )
         }
 
         Spacer(
-            modifier = Modifier.height(14.dp)
+            modifier = Modifier.height(8.dp)
         )
 
         SkeletonBlock(
-            modifier = Modifier
-                .size(145.dp),
+            modifier = Modifier.size(145.dp),
             pulse = pulse,
             cornerRadius = 12
         )
@@ -1152,7 +1318,7 @@ private fun LoadingDisplay(
         SkeletonBlock(
             modifier = Modifier
                 .width(170.dp)
-                .height(17.dp),
+                .height(18.dp),
             pulse = pulse
         )
 
@@ -1162,24 +1328,24 @@ private fun LoadingDisplay(
 
         SkeletonBlock(
             modifier = Modifier
-                .width(90.dp)
-                .height(10.dp),
+                .width(100.dp)
+                .height(12.dp),
             pulse = pulse
         )
 
         Spacer(
-            modifier = Modifier.height(15.dp)
+            modifier = Modifier.height(12.dp)
         )
 
         SkeletonBlock(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(6.dp),
+                .height(8.dp),
             pulse = pulse
         )
 
         Spacer(
-            modifier = Modifier.height(7.dp)
+            modifier = Modifier.height(8.dp)
         )
 
         Row(
@@ -1188,15 +1354,15 @@ private fun LoadingDisplay(
         ) {
             SkeletonBlock(
                 modifier = Modifier
-                    .width(32.dp)
-                    .height(7.dp),
+                    .width(36.dp)
+                    .height(10.dp),
                 pulse = pulse
             )
 
             SkeletonBlock(
                 modifier = Modifier
-                    .width(32.dp)
-                    .height(7.dp),
+                    .width(36.dp)
+                    .height(10.dp),
                 pulse = pulse
             )
         }
@@ -1216,7 +1382,7 @@ private fun LoadingWheel(
             .background(MaterialTheme.colorScheme.surface)
             .border(
                 width = 2.dp,
-                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+                color = MaterialTheme.colorScheme.outline,
                 shape = CircleShape
             ),
         contentAlignment = Alignment.Center
@@ -1224,36 +1390,36 @@ private fun LoadingWheel(
         SkeletonBlock(
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .padding(top = 24.dp)
-                .width(44.dp)
-                .height(8.dp),
+                .padding(top = 20.dp)
+                .width(48.dp)
+                .height(10.dp),
             pulse = pulse
         )
 
         SkeletonBlock(
             modifier = Modifier
                 .align(Alignment.CenterStart)
-                .padding(start = 20.dp)
-                .width(34.dp)
-                .height(8.dp),
+                .padding(start = 16.dp)
+                .width(38.dp)
+                .height(10.dp),
             pulse = pulse
         )
 
         SkeletonBlock(
             modifier = Modifier
                 .align(Alignment.CenterEnd)
-                .padding(end = 20.dp)
-                .width(34.dp)
-                .height(8.dp),
+                .padding(end = 16.dp)
+                .width(38.dp)
+                .height(10.dp),
             pulse = pulse
         )
 
         SkeletonBlock(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 24.dp)
-                .width(42.dp)
-                .height(8.dp),
+                .padding(bottom = 20.dp)
+                .width(48.dp)
+                .height(10.dp),
             pulse = pulse
         )
 
@@ -1266,10 +1432,35 @@ private fun LoadingWheel(
                 )
                 .border(
                     width = 2.dp,
-                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.35f),
+                    color = MaterialTheme.colorScheme.outline,
                     shape = CircleShape
                 )
                 .alpha(pulse)
+        )
+    }
+}
+
+@Composable
+private fun LoadingSecondaryControls(
+    pulse: Float
+) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        SkeletonBlock(
+            modifier = Modifier
+                .width(88.dp)
+                .height(48.dp),
+            pulse = pulse,
+            cornerRadius = 9
+        )
+
+        SkeletonBlock(
+            modifier = Modifier
+                .width(88.dp)
+                .height(48.dp),
+            pulse = pulse,
+            cornerRadius = 9
         )
     }
 }
@@ -1298,12 +1489,53 @@ private fun SkeletonBlock(
 
 @Composable
 private fun PlayerEmpty(
+    windowWidthSizeClass: WindowWidthSizeClass,
+    onOpenPlaylist: () -> Unit
+) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        when (windowWidthSizeClass) {
+            WindowWidthSizeClass.Compact -> {
+                CompactEmptyPlayer(
+                    maxWidthDp = 390,
+                    onOpenPlaylist = onOpenPlaylist
+                )
+            }
+
+            WindowWidthSizeClass.Medium -> {
+                CompactEmptyPlayer(
+                    maxWidthDp = 520,
+                    onOpenPlaylist = onOpenPlaylist
+                )
+            }
+
+            WindowWidthSizeClass.Expanded -> {
+                WideEmptyPlayer(
+                    onOpenPlaylist = onOpenPlaylist
+                )
+            }
+
+            else -> {
+                CompactEmptyPlayer(
+                    maxWidthDp = 390,
+                    onOpenPlaylist = onOpenPlaylist
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun CompactEmptyPlayer(
+    maxWidthDp: Int,
     onOpenPlaylist: () -> Unit
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .widthIn(max = 390.dp)
+            .widthIn(max = maxWidthDp.dp)
             .fillMaxHeight()
             .clip(RoundedCornerShape(28.dp))
             .background(MaterialTheme.colorScheme.surfaceVariant)
@@ -1318,7 +1550,7 @@ private fun PlayerEmpty(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(320.dp)
+                .weight(1f)
                 .clip(RoundedCornerShape(16.dp))
                 .background(MaterialTheme.colorScheme.surface)
                 .border(
@@ -1328,58 +1560,159 @@ private fun PlayerEmpty(
                 ),
             contentAlignment = Alignment.Center
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                KittyFace()
-
-                Spacer(Modifier.height(10.dp))
-
-                Text(
-                    text = "Ничего не играет",
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        fontFamily = FontFamily.Monospace
-                    ),
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-
-                Spacer(Modifier.height(5.dp))
-
-                Text(
-                    text = "Выберите композицию",
-                    style = MaterialTheme.typography.bodyMedium.copy(
-                        fontFamily = FontFamily.Monospace
-                    ),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-
-                Spacer(Modifier.height(18.dp))
-
-                Box(
-                    modifier = Modifier
-                        .sizeIn(
-                            minWidth = 140.dp,
-                            minHeight = 48.dp
-                        )
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(MaterialTheme.colorScheme.primary)
-                        .semantics {
-                            role = Role.Button
-                            contentDescription = "Открыть плейлист"
-                        }
-                        .clickable(onClick = onOpenPlaylist),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "PLAYLIST",
-                        style = MaterialTheme.typography.labelLarge.copy(
-                            fontFamily = FontFamily.Monospace
-                        ),
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                }
-            }
+            EmptyPlayerContent(
+                onOpenPlaylist = onOpenPlaylist
+            )
         }
+    }
+}
+
+@Composable
+private fun WideEmptyPlayer(
+    onOpenPlaylist: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .widthIn(max = 850.dp)
+            .fillMaxHeight(0.72f)
+            .clip(RoundedCornerShape(30.dp))
+            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .border(
+                width = 2.dp,
+                color = MaterialTheme.colorScheme.outline,
+                shape = RoundedCornerShape(30.dp)
+            )
+            .padding(24.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(32.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+                .clip(RoundedCornerShape(16.dp))
+                .background(MaterialTheme.colorScheme.surface)
+                .border(
+                    width = 3.dp,
+                    color = MaterialTheme.colorScheme.outline,
+                    shape = RoundedCornerShape(16.dp)
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            KittyFace()
+        }
+
+        Column(
+            modifier = Modifier.weight(1f),
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "Ничего не играет",
+                style = MaterialTheme.typography.headlineMedium.copy(
+                    fontFamily = FontFamily.Monospace
+                ),
+                color = MaterialTheme.colorScheme.onSurface
+            )
+
+            Spacer(
+                modifier = Modifier.height(8.dp)
+            )
+
+            Text(
+                text = "Выберите композицию в плейлисте, чтобы начать воспроизведение.",
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    fontFamily = FontFamily.Monospace
+                ),
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            Spacer(
+                modifier = Modifier.height(24.dp)
+            )
+
+            EmptyPlaylistButton(
+                onOpenPlaylist = onOpenPlaylist
+            )
+        }
+    }
+}
+
+@Composable
+private fun EmptyPlayerContent(
+    onOpenPlaylist: () -> Unit
+) {
+    Column(
+        modifier = Modifier.padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        KittyFace()
+
+        Spacer(
+            modifier = Modifier.height(14.dp)
+        )
+
+        Text(
+            text = "Ничего не играет",
+            style = MaterialTheme.typography.titleMedium.copy(
+                fontFamily = FontFamily.Monospace
+            ),
+            color = MaterialTheme.colorScheme.onSurface,
+            textAlign = TextAlign.Center
+        )
+
+        Spacer(
+            modifier = Modifier.height(6.dp)
+        )
+
+        Text(
+            text = "Выберите композицию",
+            style = MaterialTheme.typography.bodyMedium.copy(
+                fontFamily = FontFamily.Monospace
+            ),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center
+        )
+
+        Spacer(
+            modifier = Modifier.height(20.dp)
+        )
+
+        EmptyPlaylistButton(
+            onOpenPlaylist = onOpenPlaylist
+        )
+    }
+}
+
+@Composable
+private fun EmptyPlaylistButton(
+    onOpenPlaylist: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .sizeIn(
+                minWidth = 150.dp,
+                minHeight = 48.dp
+            )
+            .clip(RoundedCornerShape(8.dp))
+            .background(MaterialTheme.colorScheme.primary)
+            .semantics {
+                role = Role.Button
+                contentDescription = "Открыть плейлист"
+            }
+            .clickable(
+                role = Role.Button,
+                onClick = onOpenPlaylist
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "PLAYLIST",
+            style = MaterialTheme.typography.labelLarge.copy(
+                fontFamily = FontFamily.Monospace
+            ),
+            color = MaterialTheme.colorScheme.onPrimary
+        )
     }
 }
 
@@ -1402,9 +1735,9 @@ private fun formatTime(
 
 private val previewTrack = Track(
     id = 1,
-    title = "Other People",
-    artist = "LP",
-    duration = "03:48",
+    title = "Lonely Day",
+    artist = "System of a Down",
+    duration = "02:47",
     audioResId = 0,
     coverResId = 0
 )
@@ -1417,13 +1750,17 @@ private val previewTrack = Track(
 )
 @Composable
 private fun PlayerLightPreview() {
-    MegaX3PlayerTheme(darkTheme = false) {
+    MegaX3PlayerTheme(
+        darkTheme = false
+    ) {
         PlayerScreen(
             state = PlayerUiState.Content(
                 track = previewTrack,
                 isPlaying = true,
                 positionMs = 80000L,
-                durationMs = 228000L
+                durationMs = 167000L,
+                shuffle = true,
+                repeat = false
             ),
             darkTheme = false,
             windowWidthSizeClass = WindowWidthSizeClass.Compact,
@@ -1448,13 +1785,17 @@ private fun PlayerLightPreview() {
 )
 @Composable
 private fun PlayerDarkPreview() {
-    MegaX3PlayerTheme(darkTheme = true) {
+    MegaX3PlayerTheme(
+        darkTheme = true
+    ) {
         PlayerScreen(
             state = PlayerUiState.Content(
                 track = previewTrack,
                 isPlaying = false,
                 positionMs = 80000L,
-                durationMs = 228000L
+                durationMs = 167000L,
+                shuffle = false,
+                repeat = true
             ),
             darkTheme = true,
             windowWidthSizeClass = WindowWidthSizeClass.Compact,
@@ -1478,10 +1819,40 @@ private fun PlayerDarkPreview() {
 )
 @Composable
 private fun PlayerLoadingPreview() {
-    MegaX3PlayerTheme(darkTheme = false) {
+    MegaX3PlayerTheme(
+        darkTheme = false
+    ) {
         PlayerScreen(
             state = PlayerUiState.Loading,
             darkTheme = false,
+            windowWidthSizeClass = WindowWidthSizeClass.Compact,
+            onDarkThemeChange = {},
+            onOpenPlaylist = {},
+            onPlayPause = {},
+            onNext = {},
+            onPrevious = {},
+            onSeek = {},
+            onShuffle = {},
+            onRepeat = {}
+        )
+    }
+}
+
+@Preview(
+    name = "Player Loading Dark",
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    widthDp = 390,
+    heightDp = 800
+)
+@Composable
+private fun PlayerLoadingDarkPreview() {
+    MegaX3PlayerTheme(
+        darkTheme = true
+    ) {
+        PlayerScreen(
+            state = PlayerUiState.Loading,
+            darkTheme = true,
             windowWidthSizeClass = WindowWidthSizeClass.Compact,
             onDarkThemeChange = {},
             onOpenPlaylist = {},
@@ -1503,11 +1874,45 @@ private fun PlayerLoadingPreview() {
 )
 @Composable
 private fun PlayerEmptyPreview() {
-    MegaX3PlayerTheme(darkTheme = false) {
+    MegaX3PlayerTheme(
+        darkTheme = false
+    ) {
         PlayerScreen(
             state = PlayerUiState.Empty,
             darkTheme = false,
             windowWidthSizeClass = WindowWidthSizeClass.Compact,
+            onDarkThemeChange = {},
+            onOpenPlaylist = {},
+            onPlayPause = {},
+            onNext = {},
+            onPrevious = {},
+            onSeek = {},
+            onShuffle = {},
+            onRepeat = {}
+        )
+    }
+}
+
+@Preview(
+    name = "Player Medium",
+    showBackground = true,
+    widthDp = 700,
+    heightDp = 900
+)
+@Composable
+private fun PlayerMediumPreview() {
+    MegaX3PlayerTheme(
+        darkTheme = false
+    ) {
+        PlayerScreen(
+            state = PlayerUiState.Content(
+                track = previewTrack,
+                isPlaying = true,
+                positionMs = 80000L,
+                durationMs = 167000L
+            ),
+            darkTheme = false,
+            windowWidthSizeClass = WindowWidthSizeClass.Medium,
             onDarkThemeChange = {},
             onOpenPlaylist = {},
             onPlayPause = {},
@@ -1528,14 +1933,45 @@ private fun PlayerEmptyPreview() {
 )
 @Composable
 private fun PlayerTabletPreview() {
-    MegaX3PlayerTheme(darkTheme = false) {
+    MegaX3PlayerTheme(
+        darkTheme = false
+    ) {
         PlayerScreen(
             state = PlayerUiState.Content(
                 track = previewTrack,
                 isPlaying = true,
                 positionMs = 80000L,
-                durationMs = 228000L
+                durationMs = 167000L,
+                shuffle = true,
+                repeat = true
             ),
+            darkTheme = false,
+            windowWidthSizeClass = WindowWidthSizeClass.Expanded,
+            onDarkThemeChange = {},
+            onOpenPlaylist = {},
+            onPlayPause = {},
+            onNext = {},
+            onPrevious = {},
+            onSeek = {},
+            onShuffle = {},
+            onRepeat = {}
+        )
+    }
+}
+
+@Preview(
+    name = "Player Empty Tablet",
+    showBackground = true,
+    widthDp = 900,
+    heightDp = 600
+)
+@Composable
+private fun PlayerEmptyTabletPreview() {
+    MegaX3PlayerTheme(
+        darkTheme = false
+    ) {
+        PlayerScreen(
+            state = PlayerUiState.Empty,
             darkTheme = false,
             windowWidthSizeClass = WindowWidthSizeClass.Expanded,
             onDarkThemeChange = {},
