@@ -1,9 +1,9 @@
-package com.example.megax3player.ui
+package com.example.megax3player
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
@@ -11,9 +11,10 @@ import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.megax3player.data.ThemePreferences
 import com.example.megax3player.player.PlayerViewModel
@@ -57,12 +58,34 @@ class MainActivity : AppCompatActivity() {
             val coroutineScope =
                 rememberCoroutineScope()
 
-            var screen by remember {
+            var screen by rememberSaveable {
                 mutableStateOf(Screen.PLAYER)
             }
 
             val playerState by
             playerViewModel.uiState.collectAsState()
+
+            val applicationLocales =
+                AppCompatDelegate.getApplicationLocales()
+
+            val currentLanguage =
+                applicationLocales[0]?.language
+                    ?: resources.configuration.locales[0].language
+
+            val onLanguageChange: () -> Unit = {
+                val newLanguage =
+                    if (currentLanguage == "ru") {
+                        "en"
+                    } else {
+                        "ru"
+                    }
+
+                AppCompatDelegate.setApplicationLocales(
+                    LocaleListCompat.forLanguageTags(
+                        newLanguage
+                    )
+                )
+            }
 
             MegaX3PlayerTheme(
                 darkTheme = darkTheme
@@ -73,12 +96,21 @@ class MainActivity : AppCompatActivity() {
                 ) { currentScreen ->
 
                     when (currentScreen) {
+
                         Screen.PLAYER -> {
                             PlayerScreen(
                                 state = playerState,
+
                                 darkTheme = darkTheme,
+
+                                currentLanguage =
+                                    currentLanguage,
+
                                 windowWidthSizeClass =
                                     windowSizeClass.widthSizeClass,
+
+                                windowHeightSizeClass =
+                                    windowSizeClass.heightSizeClass,
 
                                 onDarkThemeChange = { newDarkTheme ->
                                     coroutineScope.launch {
@@ -88,8 +120,12 @@ class MainActivity : AppCompatActivity() {
                                     }
                                 },
 
+                                onLanguageChange =
+                                    onLanguageChange,
+
                                 onOpenPlaylist = {
-                                    screen = Screen.PLAYLIST
+                                    screen =
+                                        Screen.PLAYLIST
                                 },
 
                                 onPlayPause = {
@@ -104,8 +140,10 @@ class MainActivity : AppCompatActivity() {
                                     playerViewModel.previous()
                                 },
 
-                                onSeek = {
-                                    playerViewModel.seekTo(it)
+                                onSeek = { progress ->
+                                    playerViewModel.seekTo(
+                                        progress
+                                    )
                                 },
 
                                 onShuffle = {
@@ -129,12 +167,18 @@ class MainActivity : AppCompatActivity() {
                                 windowWidthSizeClass =
                                     windowSizeClass.widthSizeClass,
 
+                                windowHeightSizeClass =
+                                    windowSizeClass.heightSizeClass,
+
                                 onBack = {
-                                    screen = Screen.PLAYER
+                                    screen =
+                                        Screen.PLAYER
                                 },
 
                                 onTrackClick = { track ->
-                                    playerViewModel.playTrack(track)
+                                    playerViewModel.playTrack(
+                                        track
+                                    )
                                 },
 
                                 onPlayPause = {
@@ -146,7 +190,8 @@ class MainActivity : AppCompatActivity() {
                                 },
 
                                 onOpenPlayer = {
-                                    screen = Screen.PLAYER
+                                    screen =
+                                        Screen.PLAYER
                                 }
                             )
                         }
