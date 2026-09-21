@@ -6,7 +6,7 @@ val KittyPinkLight = Color(0xFF9A3C52)
 val KittyPinkDark = Color(0xFFE77989)
 val KittyYellow = Color(0xFFF0C650)
 
-val IpodBlue = Color(0xFFD6E9FA)
+val IpodBlue = Color(0xFFF6F6F6)
 val IpodSilver = Color(0xFFE1E2E2)
 val IpodSilverLight = Color(0xFFF4F4F4)
 val IpodScreen = Color(0xFFE8E9E4)

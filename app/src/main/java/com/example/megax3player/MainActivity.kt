@@ -10,9 +10,9 @@ import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSiz
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.ViewModelProvider
@@ -108,6 +108,9 @@ class MainActivity : AppCompatActivity() {
 
                                 windowWidthSizeClass =
                                     windowSizeClass.widthSizeClass,
+
+                                windowHeightSizeClass =
+                                    windowSizeClass.heightSizeClass,
 
                                 onDarkThemeChange = { newDarkTheme ->
                                     coroutineScope.launch {
