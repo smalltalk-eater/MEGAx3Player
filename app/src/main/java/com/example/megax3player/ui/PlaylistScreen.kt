@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -35,12 +36,30 @@ fun PlaylistScreen(
     tracks: List<Track>,
     playerState: PlayerUiState,
     windowWidthSizeClass: WindowWidthSizeClass,
+    windowHeightSizeClass: WindowHeightSizeClass,
     onBack: () -> Unit,
     onTrackClick: (Track) -> Unit,
     onPlayPause: () -> Unit,
     onNext: () -> Unit,
     onOpenPlayer: () -> Unit
 ) {
+    if (
+        windowHeightSizeClass ==
+        WindowHeightSizeClass.Compact
+    ) {
+        LandscapePlaylistScreen(
+            tracks = tracks,
+            playerState = playerState,
+            onBack = onBack,
+            onTrackClick = onTrackClick,
+            onPlayPause = onPlayPause,
+            onNext = onNext,
+            onOpenPlayer = onOpenPlayer
+        )
+
+        return
+    }
+
     when (windowWidthSizeClass) {
         WindowWidthSizeClass.Expanded -> {
             WidePlaylistScreen(
@@ -115,9 +134,12 @@ private fun CompactPlaylistScreen(
         } else {
             TrackList(
                 tracks = tracks,
-                currentTrackId = content?.track?.id,
-                onTrackClick = onTrackClick,
-                modifier = Modifier.weight(1f)
+                currentTrackId =
+                    content?.track?.id,
+                onTrackClick =
+                    onTrackClick,
+                modifier =
+                    Modifier.weight(1f)
             )
         }
 
@@ -132,6 +154,88 @@ private fun CompactPlaylistScreen(
                 onNext = onNext,
                 onOpenPlayer = onOpenPlayer
             )
+        }
+    }
+}
+
+@Composable
+private fun LandscapePlaylistScreen(
+    tracks: List<Track>,
+    playerState: PlayerUiState,
+    onBack: () -> Unit,
+    onTrackClick: (Track) -> Unit,
+    onPlayPause: () -> Unit,
+    onNext: () -> Unit,
+    onOpenPlayer: () -> Unit
+) {
+    val content =
+        playerState as? PlayerUiState.Content
+
+    Row(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                MaterialTheme.colorScheme.background
+            )
+            .padding(12.dp),
+        horizontalArrangement =
+            Arrangement.spacedBy(16.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .weight(1.4f)
+                .fillMaxHeight()
+        ) {
+            PlaylistHeader(
+                onBack = onBack
+            )
+
+            Spacer(
+                modifier = Modifier.height(4.dp)
+            )
+
+            PlaylistTitle(
+                trackCount = tracks.size,
+                compact = true
+            )
+
+            Spacer(
+                modifier = Modifier.height(8.dp)
+            )
+
+            if (tracks.isEmpty()) {
+                EmptyPlaylist(
+                    modifier =
+                        Modifier.weight(1f)
+                )
+            } else {
+                TrackList(
+                    tracks = tracks,
+                    currentTrackId =
+                        content?.track?.id,
+                    onTrackClick =
+                        onTrackClick,
+                    modifier =
+                        Modifier.weight(1f)
+                )
+            }
+        }
+
+        if (content != null) {
+            Column(
+                modifier = Modifier
+                    .weight(0.8f)
+                    .fillMaxHeight(),
+                verticalArrangement =
+                    Arrangement.Center
+            ) {
+                LandscapeMiniPlayer(
+                    state = content,
+                    onPlayPause = onPlayPause,
+                    onNext = onNext,
+                    onOpenPlayer = onOpenPlayer
+                )
+            }
         }
     }
 }
@@ -160,7 +264,8 @@ private fun WidePlaylistScreen(
             Arrangement.spacedBy(24.dp)
     ) {
         Column(
-            modifier = Modifier.weight(1.4f)
+            modifier =
+                Modifier.weight(1.4f)
         ) {
             PlaylistHeader(
                 onBack = onBack
@@ -180,14 +285,18 @@ private fun WidePlaylistScreen(
 
             if (tracks.isEmpty()) {
                 EmptyPlaylist(
-                    modifier = Modifier.weight(1f)
+                    modifier =
+                        Modifier.weight(1f)
                 )
             } else {
                 TrackList(
                     tracks = tracks,
-                    currentTrackId = content?.track?.id,
-                    onTrackClick = onTrackClick,
-                    modifier = Modifier.weight(1f)
+                    currentTrackId =
+                        content?.track?.id,
+                    onTrackClick =
+                        onTrackClick,
+                    modifier =
+                        Modifier.weight(1f)
                 )
             }
         }
@@ -219,10 +328,13 @@ private fun PlaylistHeader(
     onBack: () -> Unit
 ) {
     val backDescription =
-        stringResource(R.string.back_to_player)
+        stringResource(
+            R.string.back_to_player
+        )
 
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier =
+            Modifier.fillMaxWidth(),
         verticalAlignment =
             Alignment.CenterVertically
     ) {
@@ -234,6 +346,7 @@ private fun PlaylistHeader(
                 )
                 .semantics {
                     role = Role.Button
+
                     contentDescription =
                         backDescription
                 }
@@ -241,13 +354,15 @@ private fun PlaylistHeader(
                     role = Role.Button,
                     onClick = onBack
                 ),
-            contentAlignment = Alignment.Center
+            contentAlignment =
+                Alignment.Center
         ) {
             Text(
                 text = "<",
                 style =
                     MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
+                fontWeight =
+                    FontWeight.Bold,
                 color =
                     MaterialTheme.colorScheme.onBackground
             )
@@ -258,9 +373,10 @@ private fun PlaylistHeader(
         )
 
         Text(
-            text = stringResource(
-                R.string.playlist
-            ),
+            text =
+                stringResource(
+                    R.string.playlist
+                ),
             style =
                 MaterialTheme.typography.titleLarge,
             color =
@@ -271,28 +387,41 @@ private fun PlaylistHeader(
 
 @Composable
 private fun PlaylistTitle(
-    trackCount: Int
+    trackCount: Int,
+    compact: Boolean = false
 ) {
     Text(
-        text = stringResource(
-            R.string.my_music
-        ),
+        text =
+            stringResource(
+                R.string.my_music
+            ),
         style =
-            MaterialTheme.typography.headlineMedium,
+            if (compact) {
+                MaterialTheme.typography.titleLarge
+            } else {
+                MaterialTheme.typography.headlineMedium
+            },
         color =
             MaterialTheme.colorScheme.onBackground
     )
 
     Spacer(
-        modifier = Modifier.height(4.dp)
+        modifier = Modifier.height(
+            if (compact) {
+                1.dp
+            } else {
+                4.dp
+            }
+        )
     )
 
     Text(
-        text = pluralStringResource(
-            id = R.plurals.track_count,
-            count = trackCount,
-            trackCount
-        ),
+        text =
+            pluralStringResource(
+                id = R.plurals.track_count,
+                count = trackCount,
+                trackCount
+            ),
         style =
             MaterialTheme.typography.bodyMedium,
         color =
@@ -308,7 +437,8 @@ private fun TrackList(
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
-        modifier = modifier.fillMaxWidth(),
+        modifier =
+            modifier.fillMaxWidth(),
         verticalArrangement =
             Arrangement.spacedBy(8.dp)
     ) {
@@ -366,24 +496,35 @@ private fun TrackItem(
             )
             .background(
                 if (selected) {
-                    MaterialTheme.colorScheme.primary.copy(
-                        alpha = 0.12f
-                    )
+                    MaterialTheme
+                        .colorScheme
+                        .primary
+                        .copy(
+                            alpha = 0.12f
+                        )
                 } else {
-                    MaterialTheme.colorScheme.surface
+                    MaterialTheme
+                        .colorScheme
+                        .surface
                 }
             )
             .border(
-                width = if (selected) {
-                    2.dp
-                } else {
-                    1.dp
-                },
-                color = if (selected) {
-                    MaterialTheme.colorScheme.primary
-                } else {
-                    MaterialTheme.colorScheme.outline
-                },
+                width =
+                    if (selected) {
+                        2.dp
+                    } else {
+                        1.dp
+                    },
+                color =
+                    if (selected) {
+                        MaterialTheme
+                            .colorScheme
+                            .primary
+                    } else {
+                        MaterialTheme
+                            .colorScheme
+                            .outline
+                    },
                 shape =
                     RoundedCornerShape(8.dp)
             )
@@ -391,8 +532,10 @@ private fun TrackItem(
                 mergeDescendants = true
             ) {
                 role = Role.Button
+
                 contentDescription =
                     trackDescription
+
                 stateDescription =
                     selectedDescription
             }
@@ -411,15 +554,22 @@ private fun TrackItem(
                     length = 2,
                     padChar = '0'
                 ),
-            modifier = Modifier.width(32.dp),
+            modifier =
+                Modifier.width(32.dp),
             style =
                 MaterialTheme.typography.labelSmall,
-            fontWeight = FontWeight.Bold,
-            color = if (selected) {
-                MaterialTheme.colorScheme.primary
-            } else {
-                MaterialTheme.colorScheme.onSurfaceVariant
-            }
+            fontWeight =
+                FontWeight.Bold,
+            color =
+                if (selected) {
+                    MaterialTheme
+                        .colorScheme
+                        .primary
+                } else {
+                    MaterialTheme
+                        .colorScheme
+                        .onSurfaceVariant
+                }
         )
 
         Box(
@@ -429,19 +579,29 @@ private fun TrackItem(
                     RoundedCornerShape(7.dp)
                 )
                 .background(
-                    MaterialTheme.colorScheme.primary.copy(
-                        alpha = 0.12f
-                    )
+                    MaterialTheme
+                        .colorScheme
+                        .primary
+                        .copy(
+                            alpha = 0.12f
+                        )
                 ),
-            contentAlignment = Alignment.Center
+            contentAlignment =
+                Alignment.Center
         ) {
             Text(
-                text = number.toString(),
+                text =
+                    number.toString(),
                 style =
-                    MaterialTheme.typography.labelMedium,
-                fontWeight = FontWeight.Bold,
+                    MaterialTheme
+                        .typography
+                        .labelMedium,
+                fontWeight =
+                    FontWeight.Bold,
                 color =
-                    MaterialTheme.colorScheme.primary
+                    MaterialTheme
+                        .colorScheme
+                        .primary
             )
         }
 
@@ -450,7 +610,8 @@ private fun TrackItem(
         )
 
         Column(
-            modifier = Modifier.weight(1f)
+            modifier =
+                Modifier.weight(1f)
         ) {
             Text(
                 text = track.title,
@@ -458,18 +619,24 @@ private fun TrackItem(
                 overflow =
                     TextOverflow.Ellipsis,
                 style =
-                    MaterialTheme.typography.bodyLarge,
-                fontWeight = if (selected) {
-                    FontWeight.Bold
-                } else {
-                    FontWeight.Medium
-                },
+                    MaterialTheme
+                        .typography
+                        .bodyLarge,
+                fontWeight =
+                    if (selected) {
+                        FontWeight.Bold
+                    } else {
+                        FontWeight.Medium
+                    },
                 color =
-                    MaterialTheme.colorScheme.onSurface
+                    MaterialTheme
+                        .colorScheme
+                        .onSurface
             )
 
             Spacer(
-                modifier = Modifier.height(2.dp)
+                modifier =
+                    Modifier.height(2.dp)
             )
 
             Text(
@@ -478,34 +645,49 @@ private fun TrackItem(
                 overflow =
                     TextOverflow.Ellipsis,
                 style =
-                    MaterialTheme.typography.bodyMedium,
+                    MaterialTheme
+                        .typography
+                        .bodyMedium,
                 color =
-                    MaterialTheme.colorScheme.onSurfaceVariant
+                    MaterialTheme
+                        .colorScheme
+                        .onSurfaceVariant
             )
         }
 
         if (selected) {
             Text(
-                text = stringResource(
-                    R.string.playing
-                ),
-                modifier = Modifier.padding(
-                    horizontal = 8.dp
-                ),
+                text =
+                    stringResource(
+                        R.string.playing
+                    ),
+                modifier =
+                    Modifier.padding(
+                        horizontal = 8.dp
+                    ),
                 style =
-                    MaterialTheme.typography.labelSmall,
-                fontWeight = FontWeight.Bold,
+                    MaterialTheme
+                        .typography
+                        .labelSmall,
+                fontWeight =
+                    FontWeight.Bold,
                 color =
-                    MaterialTheme.colorScheme.primary
+                    MaterialTheme
+                        .colorScheme
+                        .primary
             )
         }
 
         Text(
             text = track.duration,
             style =
-                MaterialTheme.typography.labelSmall,
+                MaterialTheme
+                    .typography
+                    .labelSmall,
             color =
-                MaterialTheme.colorScheme.onSurfaceVariant
+                MaterialTheme
+                    .colorScheme
+                    .onSurfaceVariant
         )
     }
 }
@@ -531,34 +713,46 @@ private fun EmptyPlaylist(
                     RoundedCornerShape(12.dp)
             )
             .padding(24.dp),
-        contentAlignment = Alignment.Center
+        contentAlignment =
+            Alignment.Center
     ) {
         Column(
             horizontalAlignment =
                 Alignment.CenterHorizontally
         ) {
             Text(
-                text = stringResource(
-                    R.string.empty_playlist
-                ),
+                text =
+                    stringResource(
+                        R.string.empty_playlist
+                    ),
                 style =
-                    MaterialTheme.typography.titleMedium,
+                    MaterialTheme
+                        .typography
+                        .titleMedium,
                 color =
-                    MaterialTheme.colorScheme.onSurface
+                    MaterialTheme
+                        .colorScheme
+                        .onSurface
             )
 
             Spacer(
-                modifier = Modifier.height(6.dp)
+                modifier =
+                    Modifier.height(6.dp)
             )
 
             Text(
-                text = stringResource(
-                    R.string.empty_playlist_description
-                ),
+                text =
+                    stringResource(
+                        R.string.empty_playlist_description
+                    ),
                 style =
-                    MaterialTheme.typography.bodyMedium,
+                    MaterialTheme
+                        .typography
+                        .bodyMedium,
                 color =
-                    MaterialTheme.colorScheme.onSurfaceVariant
+                    MaterialTheme
+                        .colorScheme
+                        .onSurfaceVariant
             )
         }
     }
@@ -619,19 +813,28 @@ private fun MiniPlayer(
                     RoundedCornerShape(7.dp)
                 )
                 .background(
-                    MaterialTheme.colorScheme.primary.copy(
-                        alpha = 0.12f
-                    )
+                    MaterialTheme
+                        .colorScheme
+                        .primary
+                        .copy(
+                            alpha = 0.12f
+                        )
                 ),
-            contentAlignment = Alignment.Center
+            contentAlignment =
+                Alignment.Center
         ) {
             Text(
                 text = "MEGA",
                 style =
-                    MaterialTheme.typography.labelSmall,
-                fontWeight = FontWeight.Bold,
+                    MaterialTheme
+                        .typography
+                        .labelSmall,
+                fontWeight =
+                    FontWeight.Bold,
                 color =
-                    MaterialTheme.colorScheme.primary
+                    MaterialTheme
+                        .colorScheme
+                        .primary
             )
         }
 
@@ -650,6 +853,7 @@ private fun MiniPlayer(
                 )
                 .semantics {
                     role = Role.Button
+
                     contentDescription =
                         openPlayerDescription
                 }
@@ -666,10 +870,15 @@ private fun MiniPlayer(
                 overflow =
                     TextOverflow.Ellipsis,
                 style =
-                    MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Bold,
+                    MaterialTheme
+                        .typography
+                        .bodyLarge,
+                fontWeight =
+                    FontWeight.Bold,
                 color =
-                    MaterialTheme.colorScheme.onSurface
+                    MaterialTheme
+                        .colorScheme
+                        .onSurface
             )
 
             Text(
@@ -678,9 +887,13 @@ private fun MiniPlayer(
                 overflow =
                     TextOverflow.Ellipsis,
                 style =
-                    MaterialTheme.typography.bodyMedium,
+                    MaterialTheme
+                        .typography
+                        .bodyMedium,
                 color =
-                    MaterialTheme.colorScheme.onSurfaceVariant
+                    MaterialTheme
+                        .colorScheme
+                        .onSurfaceVariant
             )
         }
 
@@ -689,18 +902,20 @@ private fun MiniPlayer(
         )
 
         MiniPlayerButton(
-            text = if (state.isPlaying) {
-                stringResource(
-                    R.string.pause
-                )
-            } else {
-                stringResource(
-                    R.string.play
-                )
-            },
+            text =
+                if (state.isPlaying) {
+                    stringResource(
+                        R.string.pause
+                    )
+                } else {
+                    stringResource(
+                        R.string.play
+                    )
+                },
             description =
                 playPauseDescription,
-            onClick = onPlayPause
+            onClick =
+                onPlayPause
         )
 
         Spacer(
@@ -708,13 +923,223 @@ private fun MiniPlayer(
         )
 
         MiniPlayerButton(
-            text = stringResource(
-                R.string.next
-            ),
+            text =
+                stringResource(
+                    R.string.next
+                ),
             description =
                 nextDescription,
-            onClick = onNext
+            onClick =
+                onNext
         )
+    }
+}
+
+@Composable
+private fun LandscapeMiniPlayer(
+    state: PlayerUiState.Content,
+    onPlayPause: () -> Unit,
+    onNext: () -> Unit,
+    onOpenPlayer: () -> Unit
+) {
+    val playPauseDescription =
+        if (state.isPlaying) {
+            stringResource(
+                R.string.pause_playback
+            )
+        } else {
+            stringResource(
+                R.string.start_playback
+            )
+        }
+
+    val nextDescription =
+        stringResource(
+            R.string.next_track
+        )
+
+    val openDescription =
+        stringResource(
+            R.string.open_full_player
+        )
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(
+                RoundedCornerShape(12.dp)
+            )
+            .background(
+                MaterialTheme.colorScheme.surface
+            )
+            .border(
+                width = 1.dp,
+                color =
+                    MaterialTheme.colorScheme.outline,
+                shape =
+                    RoundedCornerShape(12.dp)
+            )
+            .padding(12.dp),
+        horizontalAlignment =
+            Alignment.CenterHorizontally
+    ) {
+        Box(
+            modifier = Modifier
+                .size(80.dp)
+                .clip(
+                    RoundedCornerShape(10.dp)
+                )
+                .background(
+                    MaterialTheme
+                        .colorScheme
+                        .primary
+                        .copy(
+                            alpha = 0.12f
+                        )
+                ),
+            contentAlignment =
+                Alignment.Center
+        ) {
+            Text(
+                text = "MEGA",
+                style =
+                    MaterialTheme
+                        .typography
+                        .labelLarge,
+                fontWeight =
+                    FontWeight.Bold,
+                color =
+                    MaterialTheme
+                        .colorScheme
+                        .primary
+            )
+        }
+
+        Spacer(
+            modifier = Modifier.height(8.dp)
+        )
+
+        Text(
+            text = state.track.title,
+            maxLines = 1,
+            overflow =
+                TextOverflow.Ellipsis,
+            style =
+                MaterialTheme
+                    .typography
+                    .titleSmall,
+            fontWeight =
+                FontWeight.Bold,
+            color =
+                MaterialTheme
+                    .colorScheme
+                    .onSurface
+        )
+
+        Text(
+            text = state.track.artist,
+            maxLines = 1,
+            overflow =
+                TextOverflow.Ellipsis,
+            style =
+                MaterialTheme
+                    .typography
+                    .bodySmall,
+            color =
+                MaterialTheme
+                    .colorScheme
+                    .onSurfaceVariant
+        )
+
+        Spacer(
+            modifier = Modifier.height(10.dp)
+        )
+
+        Row(
+            horizontalArrangement =
+                Arrangement.spacedBy(8.dp)
+        ) {
+            MiniPlayerButton(
+                text =
+                    if (state.isPlaying) {
+                        stringResource(
+                            R.string.pause
+                        )
+                    } else {
+                        stringResource(
+                            R.string.play
+                        )
+                    },
+                description =
+                    playPauseDescription,
+                onClick =
+                    onPlayPause
+            )
+
+            MiniPlayerButton(
+                text =
+                    stringResource(
+                        R.string.next
+                    ),
+                description =
+                    nextDescription,
+                onClick =
+                    onNext
+            )
+        }
+
+        Spacer(
+            modifier = Modifier.height(8.dp)
+        )
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .sizeIn(
+                    minHeight = 48.dp
+                )
+                .clip(
+                    RoundedCornerShape(8.dp)
+                )
+                .border(
+                    width = 1.dp,
+                    color =
+                        MaterialTheme
+                            .colorScheme
+                            .primary,
+                    shape =
+                        RoundedCornerShape(8.dp)
+                )
+                .semantics {
+                    role = Role.Button
+
+                    contentDescription =
+                        openDescription
+                }
+                .clickable(
+                    role = Role.Button,
+                    onClick = onOpenPlayer
+                ),
+            contentAlignment =
+                Alignment.Center
+        ) {
+            Text(
+                text =
+                    stringResource(
+                        R.string.open_player
+                    ),
+                style =
+                    MaterialTheme
+                        .typography
+                        .labelMedium,
+                fontWeight =
+                    FontWeight.Bold,
+                color =
+                    MaterialTheme
+                        .colorScheme
+                        .primary
+            )
+        }
     }
 }
 
@@ -738,22 +1163,32 @@ private fun MiniPlayerButton(
             )
             .semantics {
                 role = Role.Button
+
                 contentDescription =
                     description
             }
             .clickable(
                 role = Role.Button,
                 onClick = onClick
+            )
+            .padding(
+                horizontal = 8.dp
             ),
-        contentAlignment = Alignment.Center
+        contentAlignment =
+            Alignment.Center
     ) {
         Text(
             text = text,
             style =
-                MaterialTheme.typography.labelSmall,
-            fontWeight = FontWeight.Bold,
+                MaterialTheme
+                    .typography
+                    .labelSmall,
+            fontWeight =
+                FontWeight.Bold,
             color =
-                MaterialTheme.colorScheme.onPrimary
+                MaterialTheme
+                    .colorScheme
+                    .onPrimary
         )
     }
 }
@@ -813,19 +1248,28 @@ private fun NowPlayingPanel(
                     RoundedCornerShape(12.dp)
                 )
                 .background(
-                    MaterialTheme.colorScheme.primary.copy(
-                        alpha = 0.12f
-                    )
+                    MaterialTheme
+                        .colorScheme
+                        .primary
+                        .copy(
+                            alpha = 0.12f
+                        )
                 ),
-            contentAlignment = Alignment.Center
+            contentAlignment =
+                Alignment.Center
         ) {
             Text(
                 text = "MEGA",
                 style =
-                    MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
+                    MaterialTheme
+                        .typography
+                        .headlineMedium,
+                fontWeight =
+                    FontWeight.Bold,
                 color =
-                    MaterialTheme.colorScheme.primary
+                    MaterialTheme
+                        .colorScheme
+                        .primary
             )
         }
 
@@ -839,9 +1283,15 @@ private fun NowPlayingPanel(
             overflow =
                 TextOverflow.Ellipsis,
             style =
-                MaterialTheme.typography.titleMedium,
+                MaterialTheme
+                    .typography
+                    .titleMedium,
+            fontWeight =
+                FontWeight.Bold,
             color =
-                MaterialTheme.colorScheme.onSurface
+                MaterialTheme
+                    .colorScheme
+                    .onSurface
         )
 
         Spacer(
@@ -854,9 +1304,13 @@ private fun NowPlayingPanel(
             overflow =
                 TextOverflow.Ellipsis,
             style =
-                MaterialTheme.typography.bodyMedium,
+                MaterialTheme
+                    .typography
+                    .bodyMedium,
             color =
-                MaterialTheme.colorScheme.onSurfaceVariant
+                MaterialTheme
+                    .colorScheme
+                    .onSurfaceVariant
         )
 
         Spacer(
@@ -868,27 +1322,31 @@ private fun NowPlayingPanel(
                 Arrangement.spacedBy(8.dp)
         ) {
             MiniPlayerButton(
-                text = if (state.isPlaying) {
-                    stringResource(
-                        R.string.pause
-                    )
-                } else {
-                    stringResource(
-                        R.string.play
-                    )
-                },
+                text =
+                    if (state.isPlaying) {
+                        stringResource(
+                            R.string.pause
+                        )
+                    } else {
+                        stringResource(
+                            R.string.play
+                        )
+                    },
                 description =
                     playPauseDescription,
-                onClick = onPlayPause
+                onClick =
+                    onPlayPause
             )
 
             MiniPlayerButton(
-                text = stringResource(
-                    R.string.next
-                ),
+                text =
+                    stringResource(
+                        R.string.next
+                    ),
                 description =
                     nextDescription,
-                onClick = onNext
+                onClick =
+                    onNext
             )
         }
 
@@ -908,12 +1366,15 @@ private fun NowPlayingPanel(
                 .border(
                     width = 2.dp,
                     color =
-                        MaterialTheme.colorScheme.primary,
+                        MaterialTheme
+                            .colorScheme
+                            .primary,
                     shape =
                         RoundedCornerShape(8.dp)
                 )
                 .semantics {
                     role = Role.Button
+
                     contentDescription =
                         openDescription
                 }
@@ -921,72 +1382,114 @@ private fun NowPlayingPanel(
                     role = Role.Button,
                     onClick = onOpenPlayer
                 ),
-            contentAlignment = Alignment.Center
+            contentAlignment =
+                Alignment.Center
         ) {
             Text(
-                text = stringResource(
-                    R.string.open_player
-                ),
+                text =
+                    stringResource(
+                        R.string.open_player
+                    ),
                 style =
-                    MaterialTheme.typography.labelLarge,
-                fontWeight = FontWeight.Bold,
+                    MaterialTheme
+                        .typography
+                        .labelLarge,
+                fontWeight =
+                    FontWeight.Bold,
                 color =
-                    MaterialTheme.colorScheme.primary
+                    MaterialTheme
+                        .colorScheme
+                        .primary
             )
         }
     }
 }
 
-private val previewTracks = listOf(
-    Track(
-        id = 1,
-        title = "Windows XP",
-        artist = "window",
-        duration = "00:04",
-        audioResId = 0
-    ),
-    Track(
-        id = 2,
-        title = "Lonely Day",
-        artist = "System of a Down",
-        duration = "02:47",
-        audioResId = 0
-    ),
-    Track(
-        id = 3,
-        title = "Other People",
-        artist = "LP",
-        duration = "03:48",
-        audioResId = 0
+private val previewTracks =
+    listOf(
+        Track(
+            id = 1,
+            title = "Windows XP",
+            artist = "window",
+            duration = "00:04",
+            audioResId = 0
+        ),
+        Track(
+            id = 2,
+            title = "Lonely Day",
+            artist = "System of a Down",
+            duration = "02:47",
+            audioResId = 0
+        ),
+        Track(
+            id = 3,
+            title = "Other People",
+            artist = "LP",
+            duration = "03:48",
+            audioResId = 0
+        )
     )
-)
 
 private val previewPlaylistState =
     PlayerUiState.Content(
-        track = previewTracks.first(),
+        track =
+            previewTracks.first(),
         isPlaying = true,
         positionMs = 2000L,
         durationMs = 4000L
     )
 
 @Preview(
-    name = "Playlist English",
+    name = "Playlist Russian Portrait",
+    showBackground = true,
+    locale = "ru",
+    widthDp = 390,
+    heightDp = 800
+)
+@Composable
+private fun PlaylistRussianPortraitPreview() {
+    MegaX3PlayerTheme(
+        darkTheme = false
+    ) {
+        PlaylistScreen(
+            tracks =
+                previewTracks,
+            playerState =
+                previewPlaylistState,
+            windowWidthSizeClass =
+                WindowWidthSizeClass.Compact,
+            windowHeightSizeClass =
+                WindowHeightSizeClass.Medium,
+            onBack = {},
+            onTrackClick = {},
+            onPlayPause = {},
+            onNext = {},
+            onOpenPlayer = {}
+        )
+    }
+}
+
+@Preview(
+    name = "Playlist English Portrait",
     showBackground = true,
     locale = "en",
     widthDp = 390,
     heightDp = 800
 )
 @Composable
-private fun PlaylistEnglishPreview() {
+private fun PlaylistEnglishPortraitPreview() {
     MegaX3PlayerTheme(
         darkTheme = false
     ) {
         PlaylistScreen(
-            tracks = previewTracks,
+            tracks =
+                previewTracks,
             playerState =
                 previewPlaylistState,
             windowWidthSizeClass =
                 WindowWidthSizeClass.Compact,
+            windowHeightSizeClass =
+                WindowHeightSizeClass.Medium,
             onBack = {},
             onTrackClick = {},
             onPlayPause = {},
@@ -997,23 +1500,26 @@ private fun PlaylistEnglishPreview() {
 }
 
 @Preview(
-    name = "Playlist Russian",
+    name = "Playlist Landscape",
     showBackground = true,
     locale = "ru",
-    widthDp = 390,
-    heightDp = 800
+    widthDp = 800,
+    heightDp = 360
 )
 @Composable
-private fun PlaylistRussianPreview() {
+private fun PlaylistLandscapePreview() {
     MegaX3PlayerTheme(
         darkTheme = false
     ) {
         PlaylistScreen(
-            tracks = previewTracks,
+            tracks =
+                previewTracks,
             playerState =
                 previewPlaylistState,
             windowWidthSizeClass =
-                WindowWidthSizeClass.Compact,
+                WindowWidthSizeClass.Medium,
+            windowHeightSizeClass =
+                WindowHeightSizeClass.Compact,
             onBack = {},
             onTrackClick = {},
             onPlayPause = {},
@@ -1024,25 +1530,28 @@ private fun PlaylistRussianPreview() {
 }
 
 @Preview(
-    name = "Playlist Dark Russian",
+    name = "Playlist Landscape Dark",
     showBackground = true,
-    locale = "ru",
+    locale = "en",
     uiMode =
         Configuration.UI_MODE_NIGHT_YES,
-    widthDp = 390,
-    heightDp = 800
+    widthDp = 800,
+    heightDp = 360
 )
 @Composable
-private fun PlaylistDarkPreview() {
+private fun PlaylistLandscapeDarkPreview() {
     MegaX3PlayerTheme(
         darkTheme = true
     ) {
         PlaylistScreen(
-            tracks = previewTracks,
+            tracks =
+                previewTracks,
             playerState =
                 previewPlaylistState,
             windowWidthSizeClass =
-                WindowWidthSizeClass.Compact,
+                WindowWidthSizeClass.Medium,
+            windowHeightSizeClass =
+                WindowHeightSizeClass.Compact,
             onBack = {},
             onTrackClick = {},
             onPlayPause = {},
@@ -1065,11 +1574,14 @@ private fun PlaylistTabletPreview() {
         darkTheme = false
     ) {
         PlaylistScreen(
-            tracks = previewTracks,
+            tracks =
+                previewTracks,
             playerState =
                 previewPlaylistState,
             windowWidthSizeClass =
                 WindowWidthSizeClass.Expanded,
+            windowHeightSizeClass =
+                WindowHeightSizeClass.Medium,
             onBack = {},
             onTrackClick = {},
             onPlayPause = {},
@@ -1092,11 +1604,14 @@ private fun PlaylistEmptyPreview() {
         darkTheme = false
     ) {
         PlaylistScreen(
-            tracks = emptyList(),
+            tracks =
+                emptyList(),
             playerState =
                 PlayerUiState.Empty,
             windowWidthSizeClass =
                 WindowWidthSizeClass.Compact,
+            windowHeightSizeClass =
+                WindowHeightSizeClass.Medium,
             onBack = {},
             onTrackClick = {},
             onPlayPause = {},
