@@ -1,5 +1,12 @@
 package com.example.megax3player
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
+import androidx.compose.animation.core.tween
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
@@ -23,6 +30,13 @@ import com.example.megax3player.player.PlayerViewModel
 import com.example.megax3player.ui.PlayerScreen
 import com.example.megax3player.ui.PlaylistScreen
 import com.example.megax3player.`val`.MegaX3PlayerTheme
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
+import androidx.compose.animation.core.tween
 import kotlinx.coroutines.launch
 
 private enum class Screen {
@@ -108,6 +122,45 @@ class MainActivity : AppCompatActivity() {
             ) {
                 AnimatedContent(
                     targetState = screen,
+                    transitionSpec = {
+                        if (targetState == Screen.PLAYLIST) {
+                            (
+                                    slideInHorizontally(
+                                        animationSpec = tween(400),
+                                        initialOffsetX = { width -> width }
+                                    ) +
+                                            fadeIn(
+                                                animationSpec = tween(300)
+                                            )
+                                    ).togetherWith(
+                                    slideOutHorizontally(
+                                        animationSpec = tween(400),
+                                        targetOffsetX = { width -> -width }
+                                    ) +
+                                            fadeOut(
+                                                animationSpec = tween(250)
+                                            )
+                                )
+                        } else {
+                            (
+                                    slideInHorizontally(
+                                        animationSpec = tween(400),
+                                        initialOffsetX = { width -> -width }
+                                    ) +
+                                            fadeIn(
+                                                animationSpec = tween(300)
+                                            )
+                                    ).togetherWith(
+                                    slideOutHorizontally(
+                                        animationSpec = tween(400),
+                                        targetOffsetX = { width -> width }
+                                    ) +
+                                            fadeOut(
+                                                animationSpec = tween(250)
+                                            )
+                                )
+                        }
+                    },
                     label = "screenTransition"
                 ) { currentScreen ->
 

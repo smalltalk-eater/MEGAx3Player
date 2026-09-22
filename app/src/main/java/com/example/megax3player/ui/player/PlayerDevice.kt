@@ -5,16 +5,13 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.megax3player.ui.PlayerUiState
 
 @Composable
@@ -52,40 +49,8 @@ internal fun PlayerDevice(
         return
     }
 
-    when (windowWidthSizeClass) {
-        WindowWidthSizeClass.Compact -> CompactPlayer(
-            state = state,
-            darkTheme = darkTheme,
-            currentLanguage = currentLanguage,
-            maxWidthDp = 390,
-            onDarkThemeChange = onDarkThemeChange,
-            onLanguageChange = onLanguageChange,
-            onOpenPlaylist = onOpenPlaylist,
-            onPlayPause = onPlayPause,
-            onNext = onNext,
-            onPrevious = onPrevious,
-            onSeek = onSeek,
-            onShuffle = onShuffle,
-            onRepeat = onRepeat
-        )
-
-        WindowWidthSizeClass.Medium -> CompactPlayer(
-            state = state,
-            darkTheme = darkTheme,
-            currentLanguage = currentLanguage,
-            maxWidthDp = 520,
-            onDarkThemeChange = onDarkThemeChange,
-            onLanguageChange = onLanguageChange,
-            onOpenPlaylist = onOpenPlaylist,
-            onPlayPause = onPlayPause,
-            onNext = onNext,
-            onPrevious = onPrevious,
-            onSeek = onSeek,
-            onShuffle = onShuffle,
-            onRepeat = onRepeat
-        )
-
-        WindowWidthSizeClass.Expanded -> WidePlayer(
+    if (windowWidthSizeClass == WindowWidthSizeClass.Expanded) {
+        WidePlayer(
             state = state,
             darkTheme = darkTheme,
             currentLanguage = currentLanguage,
@@ -99,23 +64,31 @@ internal fun PlayerDevice(
             onShuffle = onShuffle,
             onRepeat = onRepeat
         )
-
-        else -> CompactPlayer(
-            state = state,
-            darkTheme = darkTheme,
-            currentLanguage = currentLanguage,
-            maxWidthDp = 390,
-            onDarkThemeChange = onDarkThemeChange,
-            onLanguageChange = onLanguageChange,
-            onOpenPlaylist = onOpenPlaylist,
-            onPlayPause = onPlayPause,
-            onNext = onNext,
-            onPrevious = onPrevious,
-            onSeek = onSeek,
-            onShuffle = onShuffle,
-            onRepeat = onRepeat
-        )
+        return
     }
+
+    val maxWidth =
+        if (windowWidthSizeClass == WindowWidthSizeClass.Medium) {
+            520.dp
+        } else {
+            390.dp
+        }
+
+    CompactPlayer(
+        state = state,
+        darkTheme = darkTheme,
+        currentLanguage = currentLanguage,
+        maxWidth = maxWidth,
+        onDarkThemeChange = onDarkThemeChange,
+        onLanguageChange = onLanguageChange,
+        onOpenPlaylist = onOpenPlaylist,
+        onPlayPause = onPlayPause,
+        onNext = onNext,
+        onPrevious = onPrevious,
+        onSeek = onSeek,
+        onShuffle = onShuffle,
+        onRepeat = onRepeat
+    )
 }
 
 @Composable
@@ -123,7 +96,7 @@ private fun CompactPlayer(
     state: PlayerUiState.Content,
     darkTheme: Boolean,
     currentLanguage: String,
-    maxWidthDp: Int,
+    maxWidth: androidx.compose.ui.unit.Dp,
     onDarkThemeChange: (Boolean) -> Unit,
     onLanguageChange: () -> Unit,
     onOpenPlaylist: () -> Unit,
@@ -137,10 +110,12 @@ private fun CompactPlayer(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .widthIn(max = maxWidthDp.dp)
+            .widthIn(max = maxWidth)
             .fillMaxHeight()
             .clip(RoundedCornerShape(28.dp))
-            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .background(
+                MaterialTheme.colorScheme.surfaceVariant
+            )
             .border(
                 2.dp,
                 MaterialTheme.colorScheme.outline,
@@ -159,7 +134,9 @@ private fun CompactPlayer(
             onSeek = onSeek
         )
 
-        Spacer(Modifier.weight(1f))
+        Spacer(
+            modifier = Modifier.weight(1f)
+        )
 
         PlayerWheel(
             isPlaying = state.isPlaying,
@@ -170,7 +147,9 @@ private fun CompactPlayer(
             onNext = onNext
         )
 
-        Spacer(Modifier.height(10.dp))
+        Spacer(
+            modifier = Modifier.height(10.dp)
+        )
 
         SecondaryControls(
             shuffle = state.shuffle,
@@ -178,9 +157,6 @@ private fun CompactPlayer(
             onShuffle = onShuffle,
             onRepeat = onRepeat
         )
-
-        Spacer(Modifier.height(8.dp))
-
     }
 }
 
@@ -204,7 +180,9 @@ private fun LandscapePlayer(
             .fillMaxSize()
             .widthIn(max = 900.dp)
             .clip(RoundedCornerShape(24.dp))
-            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .background(
+                MaterialTheme.colorScheme.surfaceVariant
+            )
             .border(
                 2.dp,
                 MaterialTheme.colorScheme.outline,
@@ -247,7 +225,9 @@ private fun LandscapePlayer(
                 onNext = onNext
             )
 
-            Spacer(Modifier.height(6.dp))
+            Spacer(
+                modifier = Modifier.height(6.dp)
+            )
 
             SecondaryControls(
                 shuffle = state.shuffle,
@@ -256,9 +236,6 @@ private fun LandscapePlayer(
                 onRepeat = onRepeat,
                 compact = true
             )
-
-            Spacer(Modifier.height(4.dp))
-
         }
     }
 }
@@ -283,7 +260,9 @@ private fun WidePlayer(
             .widthIn(max = 850.dp)
             .fillMaxHeight(0.86f)
             .clip(RoundedCornerShape(30.dp))
-            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .background(
+                MaterialTheme.colorScheme.surfaceVariant
+            )
             .border(
                 2.dp,
                 MaterialTheme.colorScheme.outline,
@@ -309,7 +288,8 @@ private fun WidePlayer(
 
         Column(
             modifier = Modifier.weight(0.9f),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
             PlayerWheel(
                 isPlaying = state.isPlaying,
@@ -320,7 +300,9 @@ private fun WidePlayer(
                 onNext = onNext
             )
 
-            Spacer(Modifier.height(18.dp))
+            Spacer(
+                modifier = Modifier.height(18.dp)
+            )
 
             SecondaryControls(
                 shuffle = state.shuffle,

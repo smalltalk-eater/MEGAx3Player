@@ -1,6 +1,5 @@
 package com.example.megax3player.ui.player
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -13,8 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
@@ -58,8 +55,8 @@ internal fun PlayerWheel(
     val wheelMaxSize =
         if (compactHeight) 160.dp else 250.dp
 
-    val verticalPadding =
-        if (compactHeight) 2.dp else 8.dp
+    val edgePadding =
+        if (compactHeight) 4.dp else 8.dp
 
     Box(
         modifier = Modifier
@@ -67,7 +64,9 @@ internal fun PlayerWheel(
             .widthIn(max = wheelMaxSize)
             .aspectRatio(1f)
             .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.surface)
+            .background(
+                MaterialTheme.colorScheme.surface
+            )
             .border(
                 2.dp,
                 MaterialTheme.colorScheme.outline,
@@ -75,48 +74,41 @@ internal fun PlayerWheel(
             )
     ) {
         WheelButton(
-            text = stringResource(R.string.menu),
-            description = openPlaylistDescription,
+            text =
+                stringResource(R.string.menu),
+            description =
+                openPlaylistDescription,
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .padding(top = verticalPadding),
+                .padding(top = edgePadding),
             onClick = onOpenPlaylist
         )
 
         WheelButton(
-            text = stringResource(R.string.previous),
-            description = previousDescription,
+            text =
+                stringResource(R.string.previous),
+            description =
+                previousDescription,
             modifier = Modifier
                 .align(Alignment.CenterStart)
-                .padding(start = 4.dp),
+                .padding(start = edgePadding),
             onClick = onPrevious
         )
 
         WheelButton(
-            text = stringResource(R.string.next),
-            description = nextDescription,
+            text =
+                stringResource(R.string.next),
+            description =
+                nextDescription,
             modifier = Modifier
                 .align(Alignment.CenterEnd)
-                .padding(end = 4.dp),
+                .padding(end = edgePadding),
             onClick = onNext
-        )
-
-        WheelButton(
-            text = if (isPlaying) {
-                stringResource(R.string.pause)
-            } else {
-                stringResource(R.string.play)
-            },
-            description = playDescription,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = verticalPadding),
-            onClick = onPlayPause
         )
 
         Box(
             modifier = Modifier
-                .fillMaxSize(0.38f)
+                .fillMaxSize(0.40f)
                 .align(Alignment.Center)
                 .clip(CircleShape)
                 .background(
@@ -138,7 +130,23 @@ internal fun PlayerWheel(
                 ),
             contentAlignment = Alignment.Center
         ) {
-            BowMark()
+            Text(
+                text =
+                    if (isPlaying) {
+                        stringResource(R.string.pause)
+                    } else {
+                        stringResource(R.string.play)
+                    },
+                style =
+                    MaterialTheme.typography.labelMedium.copy(
+                        fontFamily =
+                            FontFamily.Monospace
+                    ),
+                fontWeight =
+                    FontWeight.Bold,
+                color =
+                    MaterialTheme.colorScheme.primary
+            )
         }
     }
 }
@@ -156,69 +164,33 @@ private fun WheelButton(
                 minWidth = 48.dp,
                 minHeight = 48.dp
             )
-            .clip(RoundedCornerShape(8.dp))
+            .clip(
+                RoundedCornerShape(8.dp)
+            )
             .semantics {
                 role = Role.Button
-                contentDescription = description
+                contentDescription =
+                    description
             }
             .clickable(
                 role = Role.Button,
                 onClick = onClick
             ),
-        contentAlignment = Alignment.Center
+        contentAlignment =
+            Alignment.Center
     ) {
         Text(
             text = text,
             maxLines = 1,
-            style = MaterialTheme.typography.labelSmall.copy(
-                fontFamily = FontFamily.Monospace
-            ),
-            fontWeight = FontWeight.Bold,
+            style =
+                MaterialTheme.typography.labelSmall.copy(
+                    fontFamily =
+                        FontFamily.Monospace
+                ),
+            fontWeight =
+                FontWeight.Bold,
             color =
                 MaterialTheme.colorScheme.onSurfaceVariant
-        )
-    }
-}
-
-@Composable
-private fun BowMark() {
-    val color =
-        MaterialTheme.colorScheme.primary
-
-    Canvas(
-        modifier = Modifier.size(34.dp)
-    ) {
-        drawOval(
-            color = color,
-            topLeft = Offset(
-                size.width * 0.05f,
-                size.height * 0.23f
-            ),
-            size = Size(
-                size.width * 0.40f,
-                size.height * 0.54f
-            )
-        )
-
-        drawOval(
-            color = color,
-            topLeft = Offset(
-                size.width * 0.55f,
-                size.height * 0.23f
-            ),
-            size = Size(
-                size.width * 0.40f,
-                size.height * 0.54f
-            )
-        )
-
-        drawCircle(
-            color = color,
-            radius = size.width * 0.16f,
-            center = Offset(
-                size.width / 2f,
-                size.height / 2f
-            )
         )
     }
 }
@@ -234,11 +206,16 @@ internal fun SecondaryControls(
     Row(
         horizontalArrangement =
             Arrangement.spacedBy(
-                if (compact) 6.dp else 8.dp
+                if (compact) {
+                    6.dp
+                } else {
+                    8.dp
+                }
             )
     ) {
         SmallControl(
-            text = stringResource(R.string.shuffle),
+            text =
+                stringResource(R.string.shuffle),
             description =
                 stringResource(
                     R.string.shuffle_description
@@ -249,7 +226,8 @@ internal fun SecondaryControls(
         )
 
         SmallControl(
-            text = stringResource(R.string.repeat),
+            text =
+                stringResource(R.string.repeat),
             description =
                 stringResource(
                     R.string.repeat_description
@@ -285,31 +263,44 @@ private fun SmallControl(
         modifier = Modifier
             .sizeIn(
                 minWidth =
-                    if (compact) 104.dp else 118.dp,
+                    if (compact) {
+                        104.dp
+                    } else {
+                        118.dp
+                    },
                 minHeight = 48.dp
             )
-            .clip(RoundedCornerShape(9.dp))
+            .clip(
+                RoundedCornerShape(9.dp)
+            )
             .background(
                 if (selected) {
-                    MaterialTheme.colorScheme.primary.copy(
-                        alpha = 0.12f
-                    )
+                    MaterialTheme.colorScheme.primary
+                        .copy(alpha = 0.12f)
                 } else {
                     MaterialTheme.colorScheme.surface
                 }
             )
             .border(
-                width = if (selected) 2.dp else 1.dp,
-                color = if (selected) {
-                    MaterialTheme.colorScheme.primary
-                } else {
-                    MaterialTheme.colorScheme.outline
-                },
-                shape = RoundedCornerShape(9.dp)
+                width =
+                    if (selected) {
+                        2.dp
+                    } else {
+                        1.dp
+                    },
+                color =
+                    if (selected) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.outline
+                    },
+                shape =
+                    RoundedCornerShape(9.dp)
             )
             .semantics {
                 role = Role.Button
-                contentDescription = description
+                contentDescription =
+                    description
                 stateDescription =
                     if (selected) {
                         enabledText
@@ -323,25 +314,40 @@ private fun SmallControl(
             )
             .padding(
                 horizontal =
-                    if (compact) 5.dp else 8.dp
+                    if (compact) {
+                        5.dp
+                    } else {
+                        8.dp
+                    }
             ),
-        contentAlignment = Alignment.Center
+        contentAlignment =
+            Alignment.Center
     ) {
         Text(
-            text = "$text ${
-                if (selected) onText else offText
-            }",
+            text =
+                "$text ${
+                    if (selected) {
+                        onText
+                    } else {
+                        offText
+                    }
+                }",
             maxLines = 1,
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.labelSmall.copy(
-                fontFamily = FontFamily.Monospace
-            ),
-            fontWeight = FontWeight.Bold,
-            color = if (selected) {
-                MaterialTheme.colorScheme.primary
-            } else {
-                MaterialTheme.colorScheme.onSurfaceVariant
-            }
+            textAlign =
+                TextAlign.Center,
+            style =
+                MaterialTheme.typography.labelSmall.copy(
+                    fontFamily =
+                        FontFamily.Monospace
+                ),
+            fontWeight =
+                FontWeight.Bold,
+            color =
+                if (selected) {
+                    MaterialTheme.colorScheme.primary
+                } else {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                }
         )
     }
 }

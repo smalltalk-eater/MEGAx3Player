@@ -1,4 +1,4 @@
-package com.example.megax3player.ui.player
+package com.example.megax3player.ui
 
 import android.content.res.Configuration
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
@@ -6,29 +6,50 @@ import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.megax3player.model.Track
-import com.example.megax3player.ui.PlayerScreen
-import com.example.megax3player.ui.PlayerUiState
 import com.example.megax3player.`val`.MegaX3PlayerTheme
 
-private val previewTrack = Track(
-    id = 1,
-    title = "Lonely Day",
-    artist = "System of a Down",
-    duration = "02:47",
-    audioResId = 0,
-    coverResId = 0
+private val previewTracks = listOf(
+    Track(
+        id = 1,
+        title = "Windows XP",
+        artist = "window",
+        duration = "00:04",
+        audioResId = 0
+    ),
+    Track(
+        id = 2,
+        title = "Lonely Day",
+        artist = "System of a Down",
+        duration = "02:47",
+        audioResId = 0
+    ),
+    Track(
+        id = 3,
+        title = "Other People",
+        artist = "LP",
+        duration = "03:48",
+        audioResId = 0
+    )
 )
 
+private val previewState =
+    PlayerUiState.Content(
+        track = previewTracks.first(),
+        isPlaying = true,
+        positionMs = 2000L,
+        durationMs = 4000L
+    )
+
 @Preview(
-    name = "Player Portrait",
+    name = "Playlist Portrait",
     showBackground = true,
     locale = "ru",
     widthDp = 390,
     heightDp = 800
 )
 @Composable
-private fun PlayerPortraitPreview() {
-    PreviewPlayer(
+private fun PlaylistPortraitPreview() {
+    PreviewPlaylist(
         darkTheme = false,
         width = WindowWidthSizeClass.Compact,
         height = WindowHeightSizeClass.Medium
@@ -36,7 +57,7 @@ private fun PlayerPortraitPreview() {
 }
 
 @Preview(
-    name = "Player Dark",
+    name = "Playlist Dark",
     showBackground = true,
     locale = "ru",
     uiMode = Configuration.UI_MODE_NIGHT_YES,
@@ -44,8 +65,8 @@ private fun PlayerPortraitPreview() {
     heightDp = 800
 )
 @Composable
-private fun PlayerDarkPreview() {
-    PreviewPlayer(
+private fun PlaylistDarkPreview() {
+    PreviewPlaylist(
         darkTheme = true,
         width = WindowWidthSizeClass.Compact,
         height = WindowHeightSizeClass.Medium
@@ -53,15 +74,15 @@ private fun PlayerDarkPreview() {
 }
 
 @Preview(
-    name = "Player Landscape",
+    name = "Playlist Landscape",
     showBackground = true,
     locale = "ru",
     widthDp = 800,
     heightDp = 360
 )
 @Composable
-private fun PlayerLandscapePreview() {
-    PreviewPlayer(
+private fun PlaylistLandscapePreview() {
+    PreviewPlaylist(
         darkTheme = false,
         width = WindowWidthSizeClass.Medium,
         height = WindowHeightSizeClass.Compact
@@ -69,7 +90,7 @@ private fun PlayerLandscapePreview() {
 }
 
 @Preview(
-    name = "Player Landscape Dark",
+    name = "Playlist Landscape Dark",
     showBackground = true,
     locale = "ru",
     uiMode = Configuration.UI_MODE_NIGHT_YES,
@@ -77,8 +98,8 @@ private fun PlayerLandscapePreview() {
     heightDp = 360
 )
 @Composable
-private fun PlayerLandscapeDarkPreview() {
-    PreviewPlayer(
+private fun PlaylistLandscapeDarkPreview() {
+    PreviewPlaylist(
         darkTheme = true,
         width = WindowWidthSizeClass.Medium,
         height = WindowHeightSizeClass.Compact
@@ -86,15 +107,15 @@ private fun PlayerLandscapeDarkPreview() {
 }
 
 @Preview(
-    name = "Player Tablet",
+    name = "Playlist Tablet",
     showBackground = true,
     locale = "en",
     widthDp = 900,
     heightDp = 600
 )
 @Composable
-private fun PlayerTabletPreview() {
-    PreviewPlayer(
+private fun PlaylistTabletPreview() {
+    PreviewPlaylist(
         darkTheme = false,
         width = WindowWidthSizeClass.Expanded,
         height = WindowHeightSizeClass.Medium
@@ -102,72 +123,35 @@ private fun PlayerTabletPreview() {
 }
 
 @Preview(
-    name = "Player Loading",
-    showBackground = true,
-    widthDp = 390,
-    heightDp = 800
-)
-@Composable
-private fun PlayerLoadingPreview() {
-    MegaX3PlayerTheme(
-        darkTheme = false
-    ) {
-        PlayerScreen(
-            state = PlayerUiState.Loading,
-            darkTheme = false,
-            currentLanguage = "en",
-            windowWidthSizeClass =
-                WindowWidthSizeClass.Compact,
-            windowHeightSizeClass =
-                WindowHeightSizeClass.Medium,
-            onDarkThemeChange = {},
-            onLanguageChange = {},
-            onOpenPlaylist = {},
-            onPlayPause = {},
-            onNext = {},
-            onPrevious = {},
-            onSeek = {},
-            onShuffle = {},
-            onRepeat = {}
-        )
-    }
-}
-
-@Preview(
-    name = "Player Empty",
+    name = "Playlist Empty",
     showBackground = true,
     locale = "ru",
     widthDp = 390,
     heightDp = 800
 )
 @Composable
-private fun PlayerEmptyPreview() {
+private fun PlaylistEmptyPreview() {
     MegaX3PlayerTheme(
         darkTheme = false
     ) {
-        PlayerScreen(
-            state = PlayerUiState.Empty,
-            darkTheme = false,
-            currentLanguage = "ru",
+        PlaylistScreen(
+            tracks = emptyList(),
+            playerState = PlayerUiState.Empty,
             windowWidthSizeClass =
                 WindowWidthSizeClass.Compact,
             windowHeightSizeClass =
                 WindowHeightSizeClass.Medium,
-            onDarkThemeChange = {},
-            onLanguageChange = {},
-            onOpenPlaylist = {},
+            onBack = {},
+            onTrackClick = {},
             onPlayPause = {},
             onNext = {},
-            onPrevious = {},
-            onSeek = {},
-            onShuffle = {},
-            onRepeat = {}
+            onOpenPlayer = {}
         )
     }
 }
 
 @Composable
-private fun PreviewPlayer(
+private fun PreviewPlaylist(
     darkTheme: Boolean,
     width: WindowWidthSizeClass,
     height: WindowHeightSizeClass
@@ -175,28 +159,16 @@ private fun PreviewPlayer(
     MegaX3PlayerTheme(
         darkTheme = darkTheme
     ) {
-        PlayerScreen(
-            state = PlayerUiState.Content(
-                track = previewTrack,
-                isPlaying = true,
-                positionMs = 80000L,
-                durationMs = 167000L,
-                shuffle = true,
-                repeat = false
-            ),
-            darkTheme = darkTheme,
-            currentLanguage = "ru",
+        PlaylistScreen(
+            tracks = previewTracks,
+            playerState = previewState,
             windowWidthSizeClass = width,
             windowHeightSizeClass = height,
-            onDarkThemeChange = {},
-            onLanguageChange = {},
-            onOpenPlaylist = {},
+            onBack = {},
+            onTrackClick = {},
             onPlayPause = {},
             onNext = {},
-            onPrevious = {},
-            onSeek = {},
-            onShuffle = {},
-            onRepeat = {}
+            onOpenPlayer = {}
         )
     }
 }

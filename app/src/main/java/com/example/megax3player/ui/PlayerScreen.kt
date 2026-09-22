@@ -18,6 +18,12 @@ import androidx.compose.ui.unit.dp
 import com.example.megax3player.ui.player.PlayerDevice
 import com.example.megax3player.ui.player.PlayerEmpty
 import com.example.megax3player.ui.player.PlayerLoading
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.togetherWith
+import androidx.compose.animation.core.tween
 
 private enum class PlayerScreenMode {
     LOADING,
@@ -58,6 +64,59 @@ fun PlayerScreen(
     ) {
         AnimatedContent(
             targetState = screenMode,
+            transitionSpec = {
+                when {
+                    initialState == PlayerScreenMode.LOADING &&
+                            targetState == PlayerScreenMode.CONTENT -> {
+
+                        (
+                                fadeIn(
+                                    animationSpec = tween(450)
+                                ) +
+                                        scaleIn(
+                                            animationSpec = tween(450),
+                                            initialScale = 0.94f
+                                        )
+                                ).togetherWith(
+                                fadeOut(
+                                    animationSpec = tween(250)
+                                )
+                            )
+                    }
+
+                    initialState == PlayerScreenMode.EMPTY &&
+                            targetState == PlayerScreenMode.CONTENT -> {
+
+                        (
+                                fadeIn(
+                                    animationSpec = tween(400)
+                                ) +
+                                        scaleIn(
+                                            animationSpec = tween(400),
+                                            initialScale = 0.96f
+                                        )
+                                ).togetherWith(
+                                fadeOut(
+                                    animationSpec = tween(250)
+                                ) +
+                                        scaleOut(
+                                            animationSpec = tween(250),
+                                            targetScale = 0.96f
+                                        )
+                            )
+                    }
+
+                    else -> {
+                        fadeIn(
+                            animationSpec = tween(300)
+                        ).togetherWith(
+                            fadeOut(
+                                animationSpec = tween(220)
+                            )
+                        )
+                    }
+                }
+            },
             label = "playerState"
         ) { mode ->
             when (mode) {
