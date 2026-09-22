@@ -3,6 +3,7 @@ package com.example.megax3player.player
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import com.example.megax3player.data.TrackRepository
 import com.example.megax3player.model.Track
@@ -19,6 +20,8 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application) 
     private val tracks = TrackRepository.tracks
     private val musicPlayer = MusicPlayer(application)
 
+    private var loadingFinished = false
+
     private val _uiState = MutableStateFlow<PlayerUiState>(
         if (tracks.isEmpty()) {
             PlayerUiState.Empty
@@ -27,7 +30,8 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application) 
         }
     )
 
-    val uiState: StateFlow<PlayerUiState> = _uiState.asStateFlow()
+    val uiState: StateFlow<PlayerUiState> =
+        _uiState.asStateFlow()
 
     init {
         if (tracks.isNotEmpty()) {
@@ -36,22 +40,37 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application) 
             musicPlayer.player.addListener(
                 object : Player.Listener {
 
-                    override fun onPlaybackStateChanged(playbackState: Int) {
+                    override fun onPlaybackStateChanged(
+                        playbackState: Int
+                    ) {
                         updateState()
                     }
 
-                    override fun onIsPlayingChanged(isPlaying: Boolean) {
+                    override fun onIsPlayingChanged(
+                        isPlaying: Boolean
+                    ) {
                         updateState()
                     }
 
                     override fun onMediaItemTransition(
-                        mediaItem: androidx.media3.common.MediaItem?,
+                        mediaItem: MediaItem?,
                         reason: Int
                     ) {
                         updateState()
                     }
                 }
             )
+
+            startInitialLoading()
+        }
+    }
+
+    private fun startInitialLoading() {
+        viewModelScope.launch {
+            delay(1500)
+
+            loadingFinished = true
+            updateState()
 
             startProgressUpdates()
         }
@@ -60,8 +79,8 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application) 
     private fun startProgressUpdates() {
         viewModelScope.launch {
             while (isActive) {
-                updateState()
                 delay(500)
+                updateState()
             }
         }
     }
@@ -72,6 +91,10 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application) 
             return
         }
 
+        if (!loadingFinished) {
+            return
+        }
+
         val player = musicPlayer.player
 
         val index = player.currentMediaItemIndex
@@ -79,13 +102,15 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application) 
 
         val track = tracks[index]
 
-        val duration = if (player.duration > 0) {
-            player.duration
-        } else {
-            0L
-        }
+        val duration =
+            if (player.duration > 0) {
+                player.duration
+            } else {
+                0L
+            }
 
-        val position = player.currentPosition.coerceAtLeast(0L)
+        val position =
+            player.currentPosition.coerceAtLeast(0L)
 
         _uiState.value = PlayerUiState.Content(
             track = track,
@@ -93,62 +118,76 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application) 
             positionMs = position,
             durationMs = duration,
             shuffle = player.shuffleModeEnabled,
-            repeat = player.repeatMode == Player.REPEAT_MODE_ONE
+            repeat =
+                player.repeatMode == Player.REPEAT_MODE_ONE
         )
     }
 
     fun playPause() {
+        if (!loadingFinished) return
+
         musicPlayer.playPause()
         updateState()
     }
 
     fun next() {
+        if (!loadingFinished) return
+
         musicPlayer.next()
         updateState()
     }
 
     fun previous() {
+        if (!loadingFinished) return
+
         musicPlayer.previous()
         updateState()
     }
 
     fun seekTo(progress: Float) {
+        if (!loadingFinished) return
+
         val state = _uiState.value
 
         if (state !is PlayerUiState.Content) {
             return
         }
 
-        if (state.durationMs <= 0) {
+        if (state.durationMs <= 0L) {
             return
         }
 
-        val position = (state.durationMs * progress)
-            .toLong()
+        val position =
+            (state.durationMs * progress).toLong()
 
         musicPlayer.seekTo(position)
-
         updateState()
     }
 
     fun toggleShuffle() {
-        val enabled = !musicPlayer.player.shuffleModeEnabled
+        if (!loadingFinished) return
+
+        val enabled =
+            !musicPlayer.player.shuffleModeEnabled
 
         musicPlayer.setShuffle(enabled)
-
         updateState()
     }
 
     fun toggleRepeat() {
+        if (!loadingFinished) return
+
         val enabled =
-            musicPlayer.player.repeatMode != Player.REPEAT_MODE_ONE
+            musicPlayer.player.repeatMode !=
+                    Player.REPEAT_MODE_ONE
 
         musicPlayer.setRepeat(enabled)
-
         updateState()
     }
 
     fun playTrack(track: Track) {
+        if (!loadingFinished) return
+
         val index = tracks.indexOfFirst {
             it.id == track.id
         }
@@ -169,7 +208,6 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application) 
 
     override fun onCleared() {
         super.onCleared()
-
         musicPlayer.release()
     }
 }

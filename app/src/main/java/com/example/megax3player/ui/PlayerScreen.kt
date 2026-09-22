@@ -1,29 +1,37 @@
 package com.example.megax3player.ui
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import com.example.megax3player.ui.player.PlayerDevice
-import com.example.megax3player.ui.player.PlayerEmpty
-import com.example.megax3player.ui.player.PlayerLoading
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
+import com.example.megax3player.ui.player.PlayerDevice
+import com.example.megax3player.ui.player.PlayerEmpty
+import com.example.megax3player.ui.player.PlayerLoading
 
 private enum class PlayerScreenMode {
     LOADING,
@@ -48,7 +56,17 @@ fun PlayerScreen(
     onShuffle: () -> Unit,
     onRepeat: () -> Unit
 ) {
-    val screenMode = when (state) {
+    var demoMode by rememberSaveable {
+        mutableIntStateOf(0)
+    }
+
+    val displayState = when (demoMode) {
+        1 -> PlayerUiState.Loading
+        2 -> PlayerUiState.Empty
+        else -> state
+    }
+
+    val screenMode = when (displayState) {
         PlayerUiState.Loading -> PlayerScreenMode.LOADING
         PlayerUiState.Empty -> PlayerScreenMode.EMPTY
         is PlayerUiState.Content -> PlayerScreenMode.CONTENT
@@ -137,7 +155,8 @@ fun PlayerScreen(
 
                 PlayerScreenMode.CONTENT -> {
                     val content =
-                        state as? PlayerUiState.Content
+                        displayState as? PlayerUiState.Content
+                            ?: state as? PlayerUiState.Content
 
                     if (content != null) {
                         PlayerDevice(
@@ -160,5 +179,19 @@ fun PlayerScreen(
                 }
             }
         }
+
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .size(56.dp)
+                .zIndex(10f)
+                .pointerInput(Unit) {
+                    detectTapGestures(
+                        onLongPress = {
+                            demoMode = (demoMode + 1) % 3
+                        }
+                    )
+                }
+        )
     }
 }
